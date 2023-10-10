@@ -10,7 +10,7 @@ import torch
 from torch.utils.data import Dataset
 
 class TrainDataset(Dataset):
-    def __init__(self, triples, nentity, nrelation, negative_sample_size, mode):
+    def __init__(self, triples, nentity, nrelation, negative_sample_size, mode, negative_sample_type = "uniform"):
         self.len = len(triples)
         self.triples = triples
         self.triple_set = set(triples)
@@ -20,15 +20,32 @@ class TrainDataset(Dataset):
         self.mode = mode
         self.count = self.count_frequency(triples)
         self.true_head, self.true_tail = self.get_true_head_and_tail(self.triples)
-        
+        self.negative_sample_type = negative_sample_type ## add optional arg for negative sampling type
+        self.negative_sample_type = "use_dict"
     def __len__(self):
         return self.len
-    
+    def get_negative_sample(self, logical_entity: np.ndarray) -> np.ndarray:
+        """Returns numpy array of negative samples, using given method. 
+        Args:
+            logical_entity (np.ndarray) : set of potential entities that make sense 
+        Returns:
+            negative_sample (np.ndarray) : of negative samples
+        """ 
+        print(self.negative_sample_type)
+        if self.negative_sample_type == "uniform":
+
+            negative_sample = np.random.randint(self.nentity, size=self.negative_sample_size*2)
+        else:
+            negative_sample = np.random.choice(size=self.negative_sample_size*2, a = logical_entity)
+        return negative_sample
+
+
+
     def __getitem__(self, idx):
         positive_sample = self.triples[idx]
 
         head, relation, tail = positive_sample
-
+        
         subsampling_weight = self.count[(head, relation)] + self.count[(tail, -relation-1)]
         subsampling_weight = torch.sqrt(1 / torch.Tensor([subsampling_weight]))
         
@@ -36,14 +53,17 @@ class TrainDataset(Dataset):
         negative_sample_size = 0
 
         while negative_sample_size < self.negative_sample_size:
-            negative_sample = np.random.randint(self.nentity, size=self.negative_sample_size*2)
+         
+            logical_entity = np.arange(self.nentity) ## likely we should make some dictionary with these mappings. this will likely require domain knowledge though.
+            negative_sample = self.get_negative_sample(logical_entity=logical_entity)
+            
             if self.mode == 'head-batch':
                 mask = np.in1d(
                     negative_sample, 
                     self.true_head[(relation, tail)], 
                     assume_unique=True, 
                     invert=True
-                )
+                ) ## 
             elif self.mode == 'tail-batch':
                 mask = np.in1d(
                     negative_sample, 
