@@ -1,5 +1,6 @@
 # %%
 import pandas as pd
+import numpy as np 
 
 # %%
 # Read data from the first file into a DataFrame
@@ -132,6 +133,18 @@ df4['up/downregulate'] = df4['up/downregulate'].str.replace('_ZSCORES*', '', reg
 df4
 
 # %%
+def fill_empyty_with_na(df):
+    for column in df.columns:
+        df[column] = df[column].replace(r'^\s*$', np.nan, regex=True)
+    return df
+cancer_gene = fill_empyty_with_na(cancer_gene)
+cancer_treat = fill_empyty_with_na(cancer_treat)
+cancer_drug = fill_empyty_with_na(cancer_drug)
+df4 = fill_empyty_with_na(df4)
+cancer_gene.fillna('NA', inplace=True)
+cancer_treat.fillna('NA', inplace=True)
+cancer_drug.fillna('NA', inplace=True)
+df4.fillna('NA', inplace=True)
 triplets=[cancer_gene, cancer_treat, cancer_drug, df4]
 
 # %%
@@ -140,6 +153,7 @@ for triplet in triplets:
 
 # %%
 final_triplets=pd.concat(triplets, ignore_index=True)
+final_triplets.fillna('NA', inplace=True)
 
 # %%
 final_triplets
