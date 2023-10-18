@@ -1,12 +1,14 @@
 #!/bin/bash 
 ## bash script to run, data geneaioon and preprocessing files
 # Generate data for training and testing
+module purge
+module load python/intel/3.8.6
 DATA_PATH='./data'
 
 CODE_PATH="./codes/triplet_generation"
 echo "Generating triplets ..."
 
-#python $CODE_PATH'/triplet_generation_script.py' 
+python $CODE_PATH'/triplet_generation_script.py' 
 echo "done"
 
 echo "Pre-processing data ..."
@@ -14,7 +16,7 @@ python $CODE_PATH'/generate_entity_relations.py'
 echo "done "
 
 echo "moving data"
-rm -r $DATA_PATH'/MSK'
+rm -rf $DATA_PATH'/MSK'
 cp -r $CODE_PATH'/generated_triplets' $DATA_PATH'/MSK'
 cd $DATA_PATH'/MSK/all_triplets'
 mv ./* ..
