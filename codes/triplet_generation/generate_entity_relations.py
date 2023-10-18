@@ -86,18 +86,9 @@ def entity_to_triplet_type(triplets_to_consider: list)->None:
             for line in f:
                 temp = line.strip().split('\t')
                 overall_dict[temp[1]] = triplet_type
-    ## dict to pandas dataframe 
-    
-   # df = pd.DataFrame.from_dict(overall_dict, orient='index')
     df = pd.DataFrame([overall_dict.values(), overall_dict.keys()]).T
     df.fillna(' NA', inplace=True)
     df.to_csv(GENERATED_DATA_PATH + "/entity_to_triplet_type.txt", sep='\t', index=False, header=False)
-    # import ipdb; ipdb.set_trace()
-    # with open(GENERATED_DATA_PATH + "/entity_to_triplet_type.txt", 'w') as f:
-    #     for key in overall_dict.keys():
-    #         f.write(str(key)+"\t"+overall_dict[key]+"\n")
-
-    
 
 
 if __name__ == "__main__":

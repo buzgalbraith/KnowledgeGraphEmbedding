@@ -128,12 +128,9 @@ cancer_drug
 df4 = pd.read_csv(original_data_path + "/tcga_gene_cancer_type.txt", sep="\t", header=0, names=['gene', 'up/downregulate', 'cancer'])
 
 
-df4
-
-
 df4['up/downregulate'] = df4['up/downregulate'].str.replace('_ZSCORES*', '', regex=True)
-
-
+df4['up/downregulate'] = df4['up/downregulate'].str.replace(r'UPREGULATES.*', 'UPREGULATES', regex=True)
+df4['up/downregulate'] = df4['up/downregulate'].str.replace(r'DOWNREGULATES.*', 'DOWNREGULATES', regex=True)
 df4
 
 
@@ -161,8 +158,7 @@ final_triplets.fillna(' NA', inplace=True)
 
 final_triplets.to_csv(generated_data_path+'/all_triplets.txt', sep='\t', index=False, header=False)
 
-#triplets=[cancer_gene, cancer_treat, cancer_drug, df4]
-# cancer_gene
+
 
 cancer_gene.to_csv(generated_data_path+'/cancer_to_gene_triplets.txt', sep='\t', index=False, header=False)
 cancer_treat.to_csv(generated_data_path + '/cancer_to_treatment_triplets.txt', sep='\t', index=False, header=False)
