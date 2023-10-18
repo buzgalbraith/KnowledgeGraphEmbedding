@@ -28,7 +28,7 @@ class TrainDataset(Dataset):
             self.entity2id = entity2id ## mapping (entity, entity_id) 
             self.possible_entity_hash = self.possible_entity_hash() ## mapping (entity_type, possible_entities)
             self.entity_type_hash = self.entity_type_2_id()   
-    def entity_type_2_id(self, path_extension:str = 'entity_type.txt'):
+    def entity_type_2_id(self, path_extension:str = 'entity_to_triplet_type.txt'):
             """Returns a dictionary mapping entity id to entity type.
             
             Args:
@@ -41,7 +41,7 @@ class TrainDataset(Dataset):
             path = self.data_path + "/" + path_extension
             with open(path) as fin:
                 for line in fin:
-                    entity, entity_type = line.strip().split('\t')
+                    entity_type , entity = line.strip().split('\t')
                     entity_id = self.entity2id[entity.strip()]
                     entity_type_hash[int(entity_id)] = entity_type
             return entity_type_hash
@@ -61,8 +61,8 @@ class TrainDataset(Dataset):
             
             ## make a dictionary
             possible_entities = []
-            for entitle in entities['entities'].values:
-                possible_entities.append(int(self.entity2id[entitle.strip()]))    
+            for entity in entities['entities'].values:
+                possible_entities.append(int(self.entity2id[entity.strip()]))    
             possible_entity_hash[triplet_type] = np.array(possible_entities) 
         return possible_entity_hash
     def __len__(self):
