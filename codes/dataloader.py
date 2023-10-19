@@ -23,7 +23,6 @@ class TrainDataset(Dataset):
         self.true_head, self.true_tail = self.get_true_head_and_tail(self.triples)
         self.data_path = data_path
         self.negative_sample_type = negative_sample_type ## add optional arg for negative sampling type
-        self.negative_sample_type = "dict"
         if self.negative_sample_type == "dict":
             self.entity2id = entity2id ## mapping (entity, entity_id) 
             self.possible_entity_hash = self.possible_entity_hash() ## mapping (entity_type, possible_entities)
