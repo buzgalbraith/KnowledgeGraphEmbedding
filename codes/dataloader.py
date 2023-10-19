@@ -5,12 +5,13 @@ from __future__ import division
 from __future__ import print_function
 
 import numpy as np
+import pandas as pd
 import torch
 
 from torch.utils.data import Dataset
 
 class TrainDataset(Dataset):
-    def __init__(self, triples, nentity, nrelation, negative_sample_size, mode, negative_sample_type = "uniform"):
+    def __init__(self, triples, nentity, nrelation, negative_sample_size, mode,data_path, negative_sample_type = "uniform", entity2id = None):
         self.len = len(triples)
         self.triples = triples
         self.triple_set = set(triples)
@@ -20,23 +21,65 @@ class TrainDataset(Dataset):
         self.mode = mode
         self.count = self.count_frequency(triples)
         self.true_head, self.true_tail = self.get_true_head_and_tail(self.triples)
+        self.data_path = data_path
         self.negative_sample_type = negative_sample_type ## add optional arg for negative sampling type
-        self.negative_sample_type = "use_dict"
+        self.negative_sample_type = "dict"
+        if self.negative_sample_type == "dict":
+            self.entity2id = entity2id ## mapping (entity, entity_id) 
+            self.possible_entity_hash = self.possible_entity_hash() ## mapping (entity_type, possible_entities)
+            self.entity_type_hash = self.entity_type_2_id()   
+    def entity_type_2_id(self, path_extension:str = 'entity_to_triplet_type.txt'):
+            """Returns a dictionary mapping entity id to entity type.
+            
+            Args:
+                path_extension (str, optional ) : path from self.data_path to the entity type file. Defaults to 'entity_type.txt'. 
+            Returns:
+                entity_type_hash (dict) : dictionary mapping entity id to entity type
+            
+            """
+            entity_type_hash = {}
+            path = self.data_path + "/" + path_extension
+            with open(path) as fin:
+                for line in fin:
+                    entity_type , entity = line.strip().split('\t')
+                    entity_id = self.entity2id[entity.strip()]
+                    entity_type_hash[int(entity_id)] = entity_type
+            return entity_type_hash
+    
+    def possible_entity_hash(self, triplets_to_consider:list = ["cancer_to_drug", "cancer_to_gene", "cancer_to_treatment", "gene_to_up_regulate_to_cancer"])->dict:
+        """Returns a dictionary mapping entity type to a numpy array of possible entities to use as negative samples.
+        Args:
+            triplets_to_consider (list, optional): list types of triplets used (should each correspond to an entity file) defaults to ["cancer_to_drug", "cancer_to_gene", "cancer_to_treatment", "gene_to_up_regulate_to_cancer"]
+        Returns:
+            possible_entity_hash (dict): dictionary mapping entity type to a numpy array of possible entities (ids) to use as negative samples.
+   
+        """
+        possible_entity_hash = {}
+        for triplet_type in triplets_to_consider:
+            path = self.data_path + "/" + triplet_type + "/entities.dict"
+            entities = pd.read_csv(path, sep="\t", header=None, names=['entities'])
+            
+            ## make a dictionary
+            possible_entities = []
+            for entity in entities['entities'].values:
+                possible_entities.append(int(self.entity2id[entity.strip()]))    
+            possible_entity_hash[triplet_type] = np.array(possible_entities) 
+        return possible_entity_hash
     def __len__(self):
         return self.len
-    def get_negative_sample(self, logical_entity: np.ndarray) -> np.ndarray:
+    def get_negative_sample(self, head) -> np.ndarray:
         """Returns numpy array of negative samples, using given method. 
         Args:
-            logical_entity (np.ndarray) : set of potential entities that make sense 
+            head (str) : head of the triplet
         Returns:
             negative_sample (np.ndarray) : of negative samples
         """ 
-        print(self.negative_sample_type)
         if self.negative_sample_type == "uniform":
-
             negative_sample = np.random.randint(self.nentity, size=self.negative_sample_size*2)
         else:
-            negative_sample = np.random.choice(size=self.negative_sample_size*2, a = logical_entity)
+            current_entity_type = self.entity_type_hash[head] ## get the entity type of the head
+            possible_entities = self.possible_entity_hash[current_entity_type] ## get the possible entities for that entity type
+            negative_sample = np.random.choice(size=self.negative_sample_size*2, a = possible_entities) ## sample from the possible entities
         return negative_sample
 
 
@@ -54,8 +97,7 @@ class TrainDataset(Dataset):
 
         while negative_sample_size < self.negative_sample_size:
          
-            logical_entity = np.arange(self.nentity) ## likely we should make some dictionary with these mappings. this will likely require domain knowledge though.
-            negative_sample = self.get_negative_sample(logical_entity=logical_entity)
+            negative_sample = self.get_negative_sample(head)
             
             if self.mode == 'head-batch':
                 mask = np.in1d(
