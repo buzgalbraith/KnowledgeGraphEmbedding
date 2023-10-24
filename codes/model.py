@@ -207,14 +207,14 @@ class KGEModel(nn.Module):
 
         phase_relation = relation/(self.embedding_range.item()/pi)
 
-        re_relation = torch.cos(phase_relation)
-        im_relation = torch.sin(phase_relation)
+        re_relation = torch.cos(phase_relation) ## imaginary relation
+        im_relation = torch.sin(phase_relation) ## real relation 
 
         if mode == 'head-batch':
             re_score = re_relation * re_tail + im_relation * im_tail
             im_score = re_relation * im_tail - im_relation * re_tail
-            re_score = re_score - re_head
-            im_score = im_score - im_head
+            re_score = re_score - re_head ## imaginary score 
+            im_score = im_score - im_head ## real score. 
         else:
             re_score = re_head * re_relation - im_head * im_relation
             im_score = re_head * im_relation + im_head * re_relation
@@ -222,10 +222,10 @@ class KGEModel(nn.Module):
             im_score = im_score - im_tail
 
         score = torch.stack([re_score, im_score], dim = 0)
-        score = score.norm(dim = 0)
+        score = score.norm(dim = 0) ## so we take the forbinus norm of our score matrix, which is pretty much a p norm but still need to scale it. 
 
-        score = self.gamma.item() - score.sum(dim = 2)
-        return score
+        score = self.gamma.item() - score.sum(dim = 2) ## scale the loss by this margin parameter, kind of like regulaiztion
+        return score ## returing score
 
     def pRotatE(self, head, relation, tail, mode):
         pi = 3.14159262358979323846
@@ -311,7 +311,7 @@ class KGEModel(nn.Module):
         return log
     
     @staticmethod
-    def test_step(model, test_triples, all_true_triples, args):
+    def test_step(model, test_triples, all_true_triples, entity2id, args):
         '''
         Evaluate the model on test or valid datasets
         '''
@@ -351,20 +351,26 @@ class KGEModel(nn.Module):
                     all_true_triples, 
                     args.nentity, 
                     args.nrelation, 
-                    'head-batch'
+                    'head-batch', 
+                    negative_sample_type="dict",
+                    entity2id=entity2id,
+                    data_path=args.data_path
+
                 ), 
                 batch_size=args.test_batch_size,
                 num_workers=max(1, args.cpu_num//2), 
                 collate_fn=TestDataset.collate_fn
             )
-
             test_dataloader_tail = DataLoader(
                 TestDataset(
                     test_triples, 
                     all_true_triples, 
                     args.nentity, 
                     args.nrelation, 
-                    'tail-batch'
+                    'tail-batch', 
+                    negative_sample_type="dict",
+                    entity2id=entity2id, 
+                    data_path=args.data_path
                 ), 
                 batch_size=args.test_batch_size,
                 num_workers=max(1, args.cpu_num//2), 
@@ -388,8 +394,8 @@ class KGEModel(nn.Module):
 
                         batch_size = positive_sample.size(0)
 
-                        score = model((positive_sample, negative_sample), mode)
-                        score += filter_bias
+                        score = model((positive_sample, negative_sample), mode) 
+                        score += filter_bias 
 
                         #Explicitly sort all the entities to ensure that there is no test exposure bias
                         argsort = torch.argsort(score, dim = 1, descending=True)
@@ -403,14 +409,16 @@ class KGEModel(nn.Module):
 
                         for i in range(batch_size):
                             #Notice that argsort is not ranking
-                            ranking = (argsort[i, :] == positive_arg[i]).nonzero()
+                        
+                            ranking = (argsort[i, :] == positive_arg[i]).nonzero() 
                             assert ranking.size(0) == 1
 
                             #ranking + 1 is the true ranking used in evaluation metrics
                             ranking = 1 + ranking.item()
+
                             logs.append({
                                 'MRR': 1.0/ranking,
-                                'MR': float(ranking),
+                                'MR': float(ranking), ## this is the index that was correct effectivly
                                 'HITS@1': 1.0 if ranking <= 1 else 0.0,
                                 'HITS@3': 1.0 if ranking <= 3 else 0.0,
                                 'HITS@10': 1.0 if ranking <= 10 else 0.0,
@@ -423,6 +431,6 @@ class KGEModel(nn.Module):
 
             metrics = {}
             for metric in logs[0].keys():
-                metrics[metric] = sum([log[metric] for log in logs])/len(logs)
-
+                metrics[metric] = sum([log[metric] for log in logs])/len(logs) ## report a mean across the training set
+            metrics["Median"]= np.median([log["MR"] for log in logs])
         return metrics

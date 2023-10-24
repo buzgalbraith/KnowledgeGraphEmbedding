@@ -24,9 +24,17 @@ class TrainDataset(Dataset):
         self.data_path = data_path
         self.negative_sample_type = negative_sample_type ## add optional arg for negative sampling type
         if self.negative_sample_type == "dict":
+            self.triplet_maps = {
+        "cancer_to_drug": {"head":"cancer_type", "relation":"drug_used", "tail":"drug_type"},
+        "cancer_to_gene": {"head":"cancer_type", 'relation':'mutation' ,"tail":"gene_mutated"},
+        "cancer_to_treatment": {'head':"cancer_type", 'relation':'treated_with', 'tail':'treatment_type'},
+        "gene_to_up_regulate_to_cancer": {'head':'gene', 'relation':'up_down_regulates', 'tail':'cancer_type'},
+            }
             self.entity2id = entity2id ## mapping (entity, entity_id) 
             self.possible_entity_hash = self.possible_entity_hash() ## mapping (entity_type, possible_entities)
-            self.entity_type_hash = self.entity_type_2_id()   
+            self.entity_type_hash = self.entity_type_2_id() 
+
+
     def entity_type_2_id(self, path_extension:str = 'entity_to_triplet_type.txt'):
             """Returns a dictionary mapping entity id to entity type.
             
@@ -45,38 +53,38 @@ class TrainDataset(Dataset):
                     entity_type_hash[int(entity_id)] = entity_type
             return entity_type_hash
     
-    def possible_entity_hash(self, triplets_to_consider:list = ["cancer_to_drug", "cancer_to_gene", "cancer_to_treatment", "gene_to_up_regulate_to_cancer"])->dict:
+    def possible_entity_hash(self)->dict:
         """Returns a dictionary mapping entity type to a numpy array of possible entities to use as negative samples.
-        Args:
-            triplets_to_consider (list, optional): list types of triplets used (should each correspond to an entity file) defaults to ["cancer_to_drug", "cancer_to_gene", "cancer_to_treatment", "gene_to_up_regulate_to_cancer"]
-        Returns:
-            possible_entity_hash (dict): dictionary mapping entity type to a numpy array of possible entities (ids) to use as negative samples.
-   
+            Returns:
+                possible_entity_hash (dict): dictionary mapping entity type to a numpy array of possible entities (ids) to use as negative samples.
         """
         possible_entity_hash = {}
-        for triplet_type in triplets_to_consider:
-            path = self.data_path + "/" + triplet_type + "/entities.dict"
-            entities = pd.read_csv(path, sep="\t", header=None, names=['entities'])
-            
-            ## make a dictionary
-            possible_entities = []
-            for entity in entities['entities'].values:
-                possible_entities.append(int(self.entity2id[entity.strip()]))    
-            possible_entity_hash[triplet_type] = np.array(possible_entities) 
+        for triplet_type in self.triplet_maps:
+            for direction in ["head", "tail"]:
+                entity_type = self.triplet_maps[triplet_type][direction]
+                path = self.data_path + "/" + entity_type + ".dict" 
+                ## make a dictionary
+                vals = []
+                with open(path, "r") as f: 
+                    for line in f:
+                        vals.append(int(self.entity2id[line.strip().split('\t')[1].strip()]))
+                possible_entity_hash[entity_type] = np.array(vals)
         return possible_entity_hash
+
     def __len__(self):
         return self.len
-    def get_negative_sample(self, head) -> np.ndarray:
+    def get_negative_sample(self, entity_name) -> np.ndarray:
         """Returns numpy array of negative samples, using given method. 
         Args:
-            head (str) : head of the triplet
+            entity_name (str) : entity_name of the triplet being considered (can either be head or tail of the triplet)
         Returns:
             negative_sample (np.ndarray) : of negative samples
         """ 
         if self.negative_sample_type == "uniform":
             negative_sample = np.random.randint(self.nentity, size=self.negative_sample_size*2)
         else:
-            current_entity_type = self.entity_type_hash[head] ## get the entity type of the head
+            current_triplet_type = self.entity_type_hash[entity_name] ## get the entity type of the current entity type. 
+            current_entity_type = self.triplet_maps[current_triplet_type]["head"] if self.mode == "head-batch" else self.triplet_maps[current_triplet_type]["tail"]
             possible_entities = self.possible_entity_hash[current_entity_type] ## get the possible entities for that entity type
             negative_sample = np.random.choice(size=self.negative_sample_size*2, a = possible_entities) ## sample from the possible entities
         return negative_sample
@@ -180,13 +188,63 @@ class TrainDataset(Dataset):
 
     
 class TestDataset(Dataset):
-    def __init__(self, triples, all_true_triples, nentity, nrelation, mode):
+    def __init__(self, triples, all_true_triples, nentity, nrelation, mode,data_path ,negative_sample_type = "uniform", entity2id = None):
         self.len = len(triples)
-        self.triple_set = set(all_true_triples)
+        self.triple_set = set(all_true_triples) ## this is for them the concatenation of all entity types  from the train test and validation sets
         self.triples = triples
         self.nentity = nentity
         self.nrelation = nrelation
         self.mode = mode
+        self.data_path = data_path
+        self.negative_sample_type = negative_sample_type ## add optional arg for negative sampling type
+        if self.negative_sample_type == "dict":
+            self.triplet_maps = {
+        "cancer_to_drug": {"head":"cancer_type", "relation":"drug_used", "tail":"drug_type"},
+        "cancer_to_gene": {"head":"cancer_type", 'relation':'mutation' ,"tail":"gene_mutated"},
+        "cancer_to_treatment": {'head':"cancer_type", 'relation':'treated_with', 'tail':'treatment_type'},
+        "gene_to_up_regulate_to_cancer": {'head':'gene', 'relation':'up_down_regulates', 'tail':'cancer_type'},
+            }
+            self.entity2id = entity2id ## mapping (entity, entity_id) 
+            self.possible_entity_hash = self.possible_entity_hash() ## mapping (entity_type, possible_entities)
+            self.entity_type_hash = self.entity_type_2_id() 
+
+
+    def entity_type_2_id(self, path_extension:str = 'entity_to_triplet_type.txt'):
+            """Returns a dictionary mapping entity id to entity type.
+            
+            Args:
+                path_extension (str, optional ) : path from self.data_path to the entity type file. Defaults to 'entity_type.txt'. 
+            Returns:
+                entity_type_hash (dict) : dictionary mapping entity id to entity type
+            
+            """
+            entity_type_hash = {}
+            path = self.data_path + "/" + path_extension
+            with open(path) as fin:
+                for line in fin:
+                    entity_type , entity = line.strip().split('\t')
+                    entity_id = self.entity2id[entity.strip()]
+                    entity_type_hash[int(entity_id)] = entity_type
+            return entity_type_hash
+    
+    def possible_entity_hash(self)->dict:
+        """Returns a dictionary mapping entity type to a numpy array of possible entities to use as negative samples.
+            Returns:
+                possible_entity_hash (dict): dictionary mapping entity type to a numpy array of possible entities (ids) to use as negative samples.
+        """
+        possible_entity_hash = {}
+        for triplet_type in self.triplet_maps:
+            for direction in ["head", "tail"]:
+                entity_type = self.triplet_maps[triplet_type][direction]
+                path = self.data_path + "/" + entity_type + ".dict" 
+                ## make a dictionary
+                vals = []
+                with open(path, "r") as f: 
+                    for line in f:
+                        vals.append(int(self.entity2id[line.strip().split('\t')[1].strip()]))
+                possible_entity_hash[entity_type] = np.array(vals)
+        return possible_entity_hash
+
 
     def __len__(self):
         return self.len
@@ -194,16 +252,36 @@ class TestDataset(Dataset):
     def __getitem__(self, idx):
         head, relation, tail = self.triples[idx]
 
-        if self.mode == 'head-batch':
-            tmp = [(0, rand_head) if (rand_head, relation, tail) not in self.triple_set
-                   else (-1, head) for rand_head in range(self.nentity)]
-            tmp[head] = (0, head)
-        elif self.mode == 'tail-batch':
-            tmp = [(0, rand_tail) if (head, relation, rand_tail) not in self.triple_set
-                   else (-1, tail) for rand_tail in range(self.nentity)]
-            tmp[tail] = (0, tail)
+        if self.negative_sample_type == "uniform":
+            if self.mode == 'head-batch':
+                tmp = [(0, rand_head) if (rand_head, relation, tail) not in self.triple_set
+                    else (-1, head) for rand_head in range(self.nentity)] 
+                tmp[head] = (0, head)
+            elif self.mode == 'tail-batch':
+                tmp = [(0, rand_tail) if (head, relation, rand_tail) not in self.triple_set
+                    else (-1, tail) for rand_tail in range(self.nentity)]
+                tmp[tail] = (0, tail)
+            else:
+                raise ValueError('negative batch mode %s not supported' % self.mode)
         else:
-            raise ValueError('negative batch mode %s not supported' % self.mode)
+            if self.mode == 'head-batch':
+                
+                current_triplet_type = self.entity_type_hash[head] ## get the entity type of the current entity type. 
+                current_entity_type = self.triplet_maps[current_triplet_type]["head"] 
+                possible_entities = self.possible_entity_hash[current_entity_type] ## get the possible entities for that entity type
+                tmp = [(0, rand_head) if (rand_head, relation, tail) not in self.triple_set
+                    else (-1, head) for rand_head in possible_entities] 
+                tmp[head] = (0, head)
+                return 0 
+            elif self.mode == 'tail-batch':
+                current_triplet_type = self.entity_type_hash[head] ## get the entity type of the current entity type. 
+                current_entity_type = self.triplet_maps[current_triplet_type]["tail"] 
+                possible_entities = self.possible_entity_hash[current_entity_type] ## get the possible entities for that entity type
+                tmp = [(0, rand_tail) if (head, relation, rand_tail) not in self.triple_set
+                    else (-1, tail) for rand_tail in possible_entities]
+                tmp[tail] = (0, tail)
+            else:
+                raise ValueError('negative batch mode %s not supported' % self.mode)  
             
         tmp = torch.LongTensor(tmp)            
         filter_bias = tmp[:, 0].float()

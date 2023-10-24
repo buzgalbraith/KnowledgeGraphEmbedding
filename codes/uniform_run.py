@@ -127,7 +127,6 @@ def read_triple(file_path, entity2id, relation2id):
                 h, r, t = line.strip().split('\t')
                 triples.append((entity2id[h.strip()], relation2id[r.strip()], entity2id[t.strip()]))
         except:
-            #import ipdb; ipdb.set_trace()
             temp = line.strip().split('\t')
             one ,two ,three = temp
             triples.append((entity2id[one.strip()], relation2id[two.strip()], entity2id[three.strip()]))
@@ -244,7 +243,7 @@ def main(args):
     if args.do_train:
         # Set training dataloader iterator
         train_dataloader_head = DataLoader(
-            TrainDataset(triples = train_triples, nentity= nentity, nrelation= nrelation, negative_sample_size= args.negative_sample_size, mode = 'head-batch', entity2id= entity2id, data_path=args.data_path, negative_sample_type="dict"), 
+            TrainDataset(triples = train_triples, nentity= nentity, nrelation= nrelation, negative_sample_size= args.negative_sample_size, mode = 'head-batch', entity2id= entity2id, data_path=args.data_path, negative_sample_type="uniform"), 
             batch_size=args.batch_size,
             shuffle=True, 
             num_workers=max(1, args.cpu_num//2),
@@ -252,7 +251,7 @@ def main(args):
         )
         
         train_dataloader_tail = DataLoader(
-            TrainDataset(triples = train_triples, nentity= nentity, nrelation= nrelation, negative_sample_size= args.negative_sample_size, mode = 'tail-batch', entity2id= entity2id, data_path=args.data_path, negative_sample_type="dict"), 
+            TrainDataset(triples = train_triples, nentity= nentity, nrelation= nrelation, negative_sample_size= args.negative_sample_size, mode = 'tail-batch', entity2id= entity2id, data_path=args.data_path, negative_sample_type="uniform"), 
             batch_size=args.batch_size,
             shuffle=True, 
             num_workers=max(1, args.cpu_num//2),
@@ -364,6 +363,5 @@ def main(args):
         log_metrics('Test', step, metrics)
         
 if __name__ == '__main__':
-    print("starting run")
     main(parse_args())
 

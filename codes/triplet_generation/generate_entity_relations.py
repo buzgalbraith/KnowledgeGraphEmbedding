@@ -82,9 +82,9 @@ if __name__ == '__main__':
     triplet_maps = {
         "cancer_to_drug": {"head":"cancer_type", "relation":"drug_used", "tail":"drug_type"},
         "cancer_to_gene": {"head":"cancer_type", 'relation':'mutation' ,"tail":"gene_mutated"},
-        "cancer_to_treatment": {'head':"cancer_type", 'relation':'treated_with', 'tail':'treated_with'},
+        "cancer_to_treatment": {'head':"cancer_type", 'relation':'treated_with', 'tail':'treatment_type'},
         "gene_to_up_regulate_to_cancer": {'head':'gene', 'relation':'up_down_regulates', 'tail':'cancer_type'},
-    }
+            }
     
     triplet_types = ["all",'cancer_to_drug', 'cancer_to_gene', 'cancer_to_treatment', 'gene_to_up_regulate_to_cancer']
     construct_triplet_head_tail_files(triplet_maps)
