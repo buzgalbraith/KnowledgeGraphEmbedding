@@ -38,6 +38,8 @@ def construct_triplet_head_tail_files(triplet_maps:dict,):
     for key in entity_types.keys():
         entity_types[key] = pd.Series(entity_types[key]).drop_duplicates().reset_index(drop=True)
         save_path = GENERATED_DATA_PATH + key + ".dict"
+        ## now shuffel entity types and save them to the appropriate directory
+        entity_types[key] = entity_types[key].sample(frac=1).reset_index(drop=True)
         entity_types[key].to_csv(save_path,sep="\t", index=True, header=False)
 
 def make_train_test_val(triplet_types:list, train_ratio= .75, val_ratio=.10, seed = 15100873)->None:

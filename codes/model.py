@@ -259,10 +259,10 @@ class KGEModel(nn.Module):
 
         positive_sample, negative_sample, subsampling_weight, mode = next(train_iterator)
 
-        if args.cuda:
-            positive_sample = positive_sample.cuda()
-            negative_sample = negative_sample.cuda()
-            subsampling_weight = subsampling_weight.cuda()
+        # if args.cuda:
+        #     positive_sample = positive_sample.cuda()
+        #     negative_sample = negative_sample.cuda()
+        #     subsampling_weight = subsampling_weight.cuda()
 
         negative_score = model((positive_sample, negative_sample), mode=mode)
 
@@ -329,13 +329,13 @@ class KGEModel(nn.Module):
                     sample.append((head, relation, candidate_region))
 
             sample = torch.LongTensor(sample)
-            if args.cuda:
-                sample = sample.cuda()
+            # if args.cuda:
+            #     sample = sample.cuda()
 
             with torch.no_grad():
                 y_score = model(sample).squeeze(1).cpu().numpy()
 
-            y_true = np.array(y_true)
+                y_true = np.array(y_true)
 
             #average_precision_score is the same as auc_pr
             auc_pr = average_precision_score(y_true, y_score)
@@ -352,6 +352,7 @@ class KGEModel(nn.Module):
                     args.nentity, 
                     args.nrelation, 
                     'head-batch', 
+                    negative_sample_size = args.negative_sample_size,
                     negative_sample_type="dict",
                     entity2id=entity2id,
                     data_path=args.data_path
@@ -368,6 +369,7 @@ class KGEModel(nn.Module):
                     args.nentity, 
                     args.nrelation, 
                     'tail-batch', 
+                    negative_sample_size = args.negative_sample_size, 
                     negative_sample_type="dict",
                     entity2id=entity2id, 
                     data_path=args.data_path
@@ -386,11 +388,13 @@ class KGEModel(nn.Module):
 
             with torch.no_grad():
                 for test_dataset in test_dataset_list:
+                    good = 0
+                    max_index = 0
                     for positive_sample, negative_sample, filter_bias, mode in test_dataset:
-                        if args.cuda:
-                            positive_sample = positive_sample.cuda()
-                            negative_sample = negative_sample.cuda()
-                            filter_bias = filter_bias.cuda()
+                        # if args.cuda:
+                        #     positive_sample = positive_sample.cuda()
+                        #     negative_sample = negative_sample.cuda()
+                        #     filter_bias = filter_bias.cuda()
 
                         batch_size = positive_sample.size(0)
 
@@ -406,12 +410,16 @@ class KGEModel(nn.Module):
                             positive_arg = positive_sample[:, 2]
                         else:
                             raise ValueError('mode %s not supported' % mode)
-
+                        print("passed {0} max ranking".format(good), max_index)
                         for i in range(batch_size):
                             #Notice that argsort is not ranking
-                        
-                            ranking = (argsort[i, :] == positive_arg[i]).nonzero() 
-                            assert ranking.size(0) == 1
+                            ranking = (argsort[i, :] == positive_arg[i]).nonzero() ## this is the index of the correct answer
+                            if ranking.size(0) != 1:
+                                import ipdb; ipdb.set_trace()
+                            else:
+                                good += 1
+                                max_index = max(max_index, ranking.item())
+                            assert ranking.size(0) == 1 ## assert that there is only one correct answer
 
                             #ranking + 1 is the true ranking used in evaluation metrics
                             ranking = 1 + ranking.item()

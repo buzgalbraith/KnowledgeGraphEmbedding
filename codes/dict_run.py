@@ -86,6 +86,7 @@ def override_config(args):
     args.double_relation_embedding = argparse_dict['double_relation_embedding']
     args.hidden_dim = argparse_dict['hidden_dim']
     args.test_batch_size = argparse_dict['test_batch_size']
+
     
 def save_model(model, optimizer, save_variable_list, args):
     '''
@@ -207,7 +208,7 @@ def main(args):
     
     args.nentity = nentity
     args.nrelation = nrelation
-    
+    # args.negative_sample_size = 500 ## change this later
     logging.info('Model: %s' % args.model)
     logging.info('Data Path: %s' % args.data_path)
     logging.info('#entity: %d' % nentity)
@@ -237,8 +238,8 @@ def main(args):
     for name, param in kge_model.named_parameters():
         logging.info('Parameter %s: %s, require_grad = %s' % (name, str(param.size()), str(param.requires_grad)))
 
-    if args.cuda:
-        kge_model = kge_model.cuda()
+    # if args.cuda:
+    #     kge_model = kge_model.cuda()
     
     if args.do_train:
         # Set training dataloader iterator
