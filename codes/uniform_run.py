@@ -337,7 +337,7 @@ def main(args):
                 
             if args.do_valid and step % args.valid_steps == 0:
                 logging.info('Evaluating on Valid Dataset...')
-                metrics = kge_model.test_step(kge_model, valid_triples, all_true_triples, args, entity2id=entity2id)
+                metrics = kge_model.test_step(kge_model, valid_triples, all_true_triples, args)
                 log_metrics('Valid', step, metrics)
         
         save_variable_list = {
@@ -349,17 +349,17 @@ def main(args):
         
     if args.do_valid:
         logging.info('Evaluating on Valid Dataset...')
-        metrics = kge_model.test_step(kge_model, valid_triples, all_true_triples, args, entity2id=entity2id)
+        metrics = kge_model.test_step(kge_model, valid_triples, all_true_triples, args)
         log_metrics('Valid', step, metrics)
     
     if args.do_test:
         logging.info('Evaluating on Test Dataset...')
-        metrics = kge_model.test_step(kge_model, test_triples, all_true_triples, args, entity2id=entity2id)
+        metrics = kge_model.test_step(kge_model, test_triples, all_true_triples, args)
         log_metrics('Test', step, metrics)
     
     if args.evaluate_train:
         logging.info('Evaluating on Training Dataset...')
-        metrics = kge_model.test_step(kge_model, train_triples, all_true_triples, args, entity2id=entity2id)
+        metrics = kge_model.test_step(kge_model, train_triples, all_true_triples, args)
         log_metrics('Test', step, metrics)
         
 if __name__ == '__main__':

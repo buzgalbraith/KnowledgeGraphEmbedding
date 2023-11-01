@@ -207,14 +207,14 @@ class KGEModel(nn.Module):
 
         phase_relation = relation/(self.embedding_range.item()/pi)
 
-        re_relation = torch.cos(phase_relation) ## imaginary relation
-        im_relation = torch.sin(phase_relation) ## real relation 
+        re_relation = torch.cos(phase_relation)
+        im_relation = torch.sin(phase_relation)
 
         if mode == 'head-batch':
             re_score = re_relation * re_tail + im_relation * im_tail
             im_score = re_relation * im_tail - im_relation * re_tail
-            re_score = re_score - re_head ## imaginary score 
-            im_score = im_score - im_head ## real score. 
+            re_score = re_score - re_head
+            im_score = im_score - im_head
         else:
             re_score = re_head * re_relation - im_head * im_relation
             im_score = re_head * im_relation + im_head * re_relation
@@ -222,10 +222,10 @@ class KGEModel(nn.Module):
             im_score = im_score - im_tail
 
         score = torch.stack([re_score, im_score], dim = 0)
-        score = score.norm(dim = 0) ## so we take the forbinus norm of our score matrix, which is pretty much a p norm but still need to scale it. 
+        score = score.norm(dim = 0)
 
-        score = self.gamma.item() - score.sum(dim = 2) ## scale the loss by this margin parameter, kind of like regulaiztion
-        return score ## returing score
+        score = self.gamma.item() - score.sum(dim = 2)
+        return score
 
     def pRotatE(self, head, relation, tail, mode):
         pi = 3.14159262358979323846
@@ -259,10 +259,10 @@ class KGEModel(nn.Module):
 
         positive_sample, negative_sample, subsampling_weight, mode = next(train_iterator)
 
-        # if args.cuda:
-        #     positive_sample = positive_sample.cuda()
-        #     negative_sample = negative_sample.cuda()
-        #     subsampling_weight = subsampling_weight.cuda()
+        if args.cuda:
+            positive_sample = positive_sample.cuda()
+            negative_sample = negative_sample.cuda()
+            subsampling_weight = subsampling_weight.cuda()
 
         negative_score = model((positive_sample, negative_sample), mode=mode)
 
@@ -311,7 +311,7 @@ class KGEModel(nn.Module):
         return log
     
     @staticmethod
-    def test_step(model, test_triples, all_true_triples, entity2id, args):
+    def test_step(model, test_triples, all_true_triples, args):
         '''
         Evaluate the model on test or valid datasets
         '''
@@ -329,13 +329,13 @@ class KGEModel(nn.Module):
                     sample.append((head, relation, candidate_region))
 
             sample = torch.LongTensor(sample)
-            # if args.cuda:
-            #     sample = sample.cuda()
+            if args.cuda:
+                sample = sample.cuda()
 
             with torch.no_grad():
                 y_score = model(sample).squeeze(1).cpu().numpy()
 
-                y_true = np.array(y_true)
+            y_true = np.array(y_true)
 
             #average_precision_score is the same as auc_pr
             auc_pr = average_precision_score(y_true, y_score)
@@ -351,28 +351,20 @@ class KGEModel(nn.Module):
                     all_true_triples, 
                     args.nentity, 
                     args.nrelation, 
-                    'head-batch', 
-                    negative_sample_size = args.negative_sample_size,
-                    negative_sample_type="dict",
-                    entity2id=entity2id,
-                    data_path=args.data_path
-
+                    'head-batch'
                 ), 
                 batch_size=args.test_batch_size,
                 num_workers=max(1, args.cpu_num//2), 
                 collate_fn=TestDataset.collate_fn
             )
+
             test_dataloader_tail = DataLoader(
                 TestDataset(
                     test_triples, 
                     all_true_triples, 
                     args.nentity, 
                     args.nrelation, 
-                    'tail-batch', 
-                    negative_sample_size = args.negative_sample_size, 
-                    negative_sample_type="dict",
-                    entity2id=entity2id, 
-                    data_path=args.data_path
+                    'tail-batch'
                 ), 
                 batch_size=args.test_batch_size,
                 num_workers=max(1, args.cpu_num//2), 
@@ -388,18 +380,16 @@ class KGEModel(nn.Module):
 
             with torch.no_grad():
                 for test_dataset in test_dataset_list:
-                    good = 0
-                    max_index = 0
                     for positive_sample, negative_sample, filter_bias, mode in test_dataset:
-                        # if args.cuda:
-                        #     positive_sample = positive_sample.cuda()
-                        #     negative_sample = negative_sample.cuda()
-                        #     filter_bias = filter_bias.cuda()
+                        if args.cuda:
+                            positive_sample = positive_sample.cuda()
+                            negative_sample = negative_sample.cuda()
+                            filter_bias = filter_bias.cuda()
 
                         batch_size = positive_sample.size(0)
 
-                        score = model((positive_sample, negative_sample), mode) 
-                        score += filter_bias 
+                        score = model((positive_sample, negative_sample), mode)
+                        score += filter_bias
 
                         #Explicitly sort all the entities to ensure that there is no test exposure bias
                         argsort = torch.argsort(score, dim = 1, descending=True)
@@ -410,23 +400,17 @@ class KGEModel(nn.Module):
                             positive_arg = positive_sample[:, 2]
                         else:
                             raise ValueError('mode %s not supported' % mode)
-                        print("passed {0} max ranking".format(good), max_index)
+
                         for i in range(batch_size):
                             #Notice that argsort is not ranking
-                            ranking = (argsort[i, :] == positive_arg[i]).nonzero() ## this is the index of the correct answer
-                            if ranking.size(0) != 1:
-                                import ipdb; ipdb.set_trace()
-                            else:
-                                good += 1
-                                max_index = max(max_index, ranking.item())
-                            assert ranking.size(0) == 1 ## assert that there is only one correct answer
+                            ranking = (argsort[i, :] == positive_arg[i]).nonzero()
+                            assert ranking.size(0) == 1
 
                             #ranking + 1 is the true ranking used in evaluation metrics
                             ranking = 1 + ranking.item()
-
                             logs.append({
                                 'MRR': 1.0/ranking,
-                                'MR': float(ranking), ## this is the index that was correct effectivly
+                                'MR': float(ranking),
                                 'HITS@1': 1.0 if ranking <= 1 else 0.0,
                                 'HITS@3': 1.0 if ranking <= 3 else 0.0,
                                 'HITS@10': 1.0 if ranking <= 10 else 0.0,
@@ -439,6 +423,27 @@ class KGEModel(nn.Module):
 
             metrics = {}
             for metric in logs[0].keys():
-                metrics[metric] = sum([log[metric] for log in logs])/len(logs) ## report a mean across the training set
+                metrics[metric] = sum([log[metric] for log in logs])/len(logs)
             metrics["Median"]= np.median([log["MR"] for log in logs])
+
         return metrics
+    def load_and_mod(self, checkpoint, overlaps):
+        """loads a model from state dict then takes only embeddings from a specific range and normalizes there weights
+        
+        Arguments:
+            checkpoint {dict} -- the checkpoint to load
+            overlaps {list} -- the list of overlaps to use
+        """
+        #original_kge_model.load_state_dict(checkpoint['model_state_dict'])
+        
+        self.load_state_dict(checkpoint['model_state_dict'])
+        # self.entity_embedding = self.entity_embedding[overlaps[i] for i in range(len(overlaps))]#
+        entity_index = [overlaps[i] for i in range(len(overlaps))]
+        self.entity_embedding = torch.index_select(self.entity_embedding, 0, torch.tensor(entity_index))
+        relation_index = [overlaps[i] for i in range(len(overlaps))]
+        self.relation_embedding = torch.index_select(self.relation_embedding, 0, torch.tensor(relation_index))
+        self.entity_embedding = F.normalize(self.entity_embedding, p=2, dim=1)
+        self.relation_embedding = F.normalize(self.relation_embedding, p=2, dim=1)
+        self.nentity = end-start
+        self.nrelation = end-start
+        return self

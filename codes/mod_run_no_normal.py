@@ -12,7 +12,7 @@ import random
 
 import numpy as np
 import torch
-
+import pandas as pd
 from torch.utils.data import DataLoader
 
 from model import KGEModel
@@ -86,7 +86,6 @@ def override_config(args):
     args.double_relation_embedding = argparse_dict['double_relation_embedding']
     args.hidden_dim = argparse_dict['hidden_dim']
     args.test_batch_size = argparse_dict['test_batch_size']
-
     
 def save_model(model, optimizer, save_variable_list, args):
     '''
@@ -128,10 +127,21 @@ def read_triple(file_path, entity2id, relation2id):
                 h, r, t = line.strip().split('\t')
                 triples.append((entity2id[h.strip()], relation2id[r.strip()], entity2id[t.strip()]))
         except:
+            #import ipdb; ipdb.set_trace()
             temp = line.strip().split('\t')
             one ,two ,three = temp
             triples.append((entity2id[one.strip()], relation2id[two.strip()], entity2id[three.strip()]))
     return triples
+
+
+def get_overlap_index(full_path, subset_path):
+    """find the indexes of the subset in the full set (where both are .dict files)"""
+    full = pd.read_csv(full_path, sep='\t', header=None)
+    subset = pd.read_csv(subset_path, sep='\t', header=None)
+    subset = subset[0].tolist()
+    full = full[0].tolist()
+    overlap = [i for i, item in enumerate(full) if item in subset]
+    return overlap
 
 
 def set_logger(args):
@@ -208,7 +218,7 @@ def main(args):
     
     args.nentity = nentity
     args.nrelation = nrelation
-    # args.negative_sample_size = 500 ## change this later
+    
     logging.info('Model: %s' % args.model)
     logging.info('Data Path: %s' % args.data_path)
     logging.info('#entity: %d' % nentity)
@@ -223,16 +233,26 @@ def main(args):
     
     #All true triples
     all_true_triples = train_triples + valid_triples + test_triples
-    
+
     kge_model = KGEModel(
         model_name=args.model,
-        nentity=nentity,
-        nrelation=nrelation,
+        nentity=22873, ## full entity size
+        nrelation=151, ## full relation size 
         hidden_dim=args.hidden_dim,
         gamma=args.gamma,
         double_entity_embedding=args.double_entity_embedding,
         double_relation_embedding=args.double_relation_embedding
     )
+
+   # kge_model = KGEModel(
+    #     model_name=args.model,
+    #     nentity=nentity,
+    #     nrelation=nrelation,
+    #     hidden_dim=args.hidden_dim,
+    #     gamma=args.gamma,
+    #     double_entity_embedding=args.double_entity_embedding,
+    #     double_relation_embedding=args.double_relation_embedding
+    # )
     
     logging.info('Model Parameter Configuration:')
     for name, param in kge_model.named_parameters():
@@ -277,7 +297,22 @@ def main(args):
         logging.info('Loading checkpoint %s...' % args.init_checkpoint)
         checkpoint = torch.load(os.path.join(args.init_checkpoint, 'checkpoint'))
         init_step = checkpoint['step']
-        kge_model.load_state_dict(checkpoint['model_state_dict'])
+        entity_overlap = get_overlap_index("./data/MSK/entities.dict", args.data_path + "/entities.dict")
+        relation_overlap = get_overlap_index("./data/MSK/relations.dict", args.data_path + "/relations.dict")
+        
+        # print("overlap", entity_overlap)
+        # print("relation overlap", relation_overlap)
+        kge_model.load_state_dict(checkpoint['model_state_dict']) ## load the model state dict
+        ## kge
+        kge_model.entity_embedding.data = kge_model.entity_embedding.data[entity_overlap]
+        kge_model.relation_embedding.data = kge_model.relation_embedding.data[relation_overlap]
+    
+        # now want to normalize it 
+        #kge_model.entity_embedding.data = torch.nn.functional.normalize(kge_model.entity_embedding.data, p=2, dim=1)
+        #kge_model.relation_embedding.data = torch.nn.functional.normalize(kge_model.relation_embedding.data, p=2, dim=1)
+        ## change n entity and n relation
+        kge_model.nentity = nentity
+        kge_model.nrelation = nrelation
         if args.do_train:
             current_learning_rate = checkpoint['current_learning_rate']
             warm_up_steps = checkpoint['warm_up_steps']
@@ -360,9 +395,10 @@ def main(args):
     
     if args.evaluate_train:
         logging.info('Evaluating on Training Dataset...')
-        metrics = kge_model.test_step(kge_model, train_triples, all_true_triples,  args)
+        metrics = kge_model.test_step(kge_model, train_triples, all_true_triples, args)
         log_metrics('Test', step, metrics)
         
 if __name__ == '__main__':
+    print("starting run")
     main(parse_args())
 

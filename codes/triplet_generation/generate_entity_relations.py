@@ -3,6 +3,56 @@ import os
 import numpy as np
 GENERATED_DATA_PATH = './codes/triplet_generation/generated_triplets/'  
 
+
+
+def get_entities_and_relations(triplet_types:list)->None:
+    """takes path to a triplet file, saves all the entities and relations to a text file
+
+    Args:
+        path (string): path to a triplet file
+        triplet_type (string): name of the triplet file, will be used to name the directory where the entities and relations are saved
+    Returns:
+        None
+    """
+    all_entities = []
+    all_relations = []
+    for triplet_type in triplet_types:
+        ## makes a directoty if it doesn't exist
+        triplet_type_path = GENERATED_DATA_PATH + triplet_type + "/"
+        try: 
+            os.mkdir(triplet_type_path)
+        except:
+            pass
+        path = GENERATED_DATA_PATH + triplet_type + "_triplets.txt"
+        with open(path, 'r') as f:
+            heads = []
+            tails = []
+            relations = []
+            for line in f:
+                line = line.strip()
+                temp = line.split('\t')
+                one, two, three, = temp 
+                heads.append(one)
+                relations.append(two)
+                tails.append(three)
+        ## get unique values for each of the heads, tails, and relations
+        heads = pd.Series(heads).drop_duplicates()
+        tails = pd.Series(tails).drop_duplicates()
+        entities = pd.concat([heads, tails]).drop_duplicates().reset_index(drop=True)
+        relations = pd.Series(relations).drop_duplicates().reset_index(drop=True)
+        ## want to mak
+        entities.fillna(' NA', inplace=True)
+        relations.fillna(' NA', inplace=True)
+        entities.to_csv(triplet_type_path +"entities.dict", sep='\t', index=True, header=False)
+        relations.to_csv(triplet_type_path + "relations.dict", sep='\t', index=True, header=False)
+        ## now want to add the entites to the all entities list
+        all_entities.append(entities)
+        all_relations.append(relations)
+    ## now want to get all the unique entities and relations
+    all_entities = pd.concat(all_entities).drop_duplicates().reset_index(drop=True)
+    all_relations = pd.concat(all_relations).drop_duplicates().reset_index(drop=True)
+    all_entities.to_csv(GENERATED_DATA_PATH + "entities.dict", sep='\t', index=True, header=False)
+    all_relations.to_csv(GENERATED_DATA_PATH + "relations.dict", sep='\t', index=True, header=False)
 def construct_triplet_head_tail_files(triplet_maps:dict,):
     """creates the head tail and relation files for each triplet type and saves them to the appropriate directory.
     
@@ -88,6 +138,8 @@ if __name__ == '__main__':
         "gene_to_up_regulate_to_cancer": {'head':'gene', 'relation':'up_down_regulates', 'tail':'cancer_type'},
             }
     
-    triplet_types = ["all",'cancer_to_drug', 'cancer_to_gene', 'cancer_to_treatment', 'gene_to_up_regulate_to_cancer']
+    triplet_type_entity = ['cancer_to_drug', 'cancer_to_gene', 'cancer_to_treatment', 'gene_to_up_regulate_to_cancer']
+    triplet_type_test = ["all",'cancer_to_drug', 'cancer_to_gene', 'cancer_to_treatment', 'gene_to_up_regulate_to_cancer']
     construct_triplet_head_tail_files(triplet_maps)
-    make_train_test_val(triplet_types)
+    make_train_test_val(triplet_type_entity)
+    get_entities_and_relations(triplet_type_test)
