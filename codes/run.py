@@ -37,7 +37,7 @@ def parse_args(args=None):
     parser.add_argument('--regions', type=int, nargs='+', default=None, 
                         help='Region Id for Countries S1/S2/S3 datasets, DO NOT MANUALLY SET')
     
-    parser.add_argument('--data_path', type=str, default=None)
+    parser.add_argument('--data_path', type=str, default=None) 
     parser.add_argument('--model', default='TransE', type=str)
     parser.add_argument('-de', '--double_entity_embedding', action='store_true')
     parser.add_argument('-dr', '--double_relation_embedding', action='store_true')
@@ -67,7 +67,12 @@ def parse_args(args=None):
     
     parser.add_argument('--nentity', type=int, default=0, help='DO NOT MANUALLY SET')
     parser.add_argument('--nrelation', type=int, default=0, help='DO NOT MANUALLY SET')
-    
+
+    ## buz modification -- add triplet type and overall_data_path
+    parser.add_argument('--triplet_type', type=str, default='all', help='triplet type to use')
+    parser.add_argument('--overall_data_path', type=str, default=None, help='overall data path')
+    parser.add_argument('--negative_sample_type_train', type=str, default='uniform', help='negative sample type for training')
+    parser.add_argument('--negative_sample_type_test', type=str, default='uniform', help='negative sample type for testing')
     return parser.parse_args(args)
 
 def override_config(args):
@@ -159,6 +164,11 @@ def log_metrics(mode, step, metrics):
         
         
 def main(args):
+    ## check if overall data path is set and if not set to data_path 
+    if args.overall_data_path is None:
+        args.overall_data_path = args.data_path
+
+    print("triplet type = {0}".format(args.triplet_type))
     if (not args.do_train) and (not args.do_valid) and (not args.do_test):
         raise ValueError('one of train/val/test mode must be choosed.')
     
@@ -176,18 +186,54 @@ def main(args):
     # Write logs to checkpoint and console
     set_logger(args)
     
-    with open(os.path.join(args.data_path, 'entities.dict')) as fin:
+    with open(os.path.join(args.overall_data_path, 'entities.dict')) as fin:
         entity2id = dict()
         for line in fin:
             eid, entity = line.strip().split('\t')
             entity2id[entity] = int(eid)
 
-    with open(os.path.join(args.data_path, 'relations.dict')) as fin:
+    with open(os.path.join(args.overall_data_path, 'relations.dict')) as fin:
         relation2id = dict()
         for line in fin:
             rid, relation = line.strip().split('\t')
             relation2id[relation] = int(rid)
+
+    ## buz modification.
+    ### entity to its triplet type by id  (could extend this to like head and tail or what ever, but we can look at that later)
+    entity_to_triplet_type = dict() 
+    with open(os.path.join(args.overall_data_path, 'entity_to_triplet_type.txt')) as fin:
+        for line in fin:
+            triplet_type, entity = line.strip().split('\t')
+            id = entity2id[entity]
+            entity_to_triplet_type[id] = triplet_type
+    triplet_type_to_id = dict()
+    ## triplet type to possible entities
+    for id in entity_to_triplet_type:
+        triplet_type = entity_to_triplet_type[id]
+        if triplet_type not in triplet_type_to_id:
+            triplet_type_to_id[triplet_type] = []
+        triplet_type_to_id[triplet_type].append(id)
+
     
+    for triplet_type in triplet_type_to_id:
+        triplet_type_to_id[triplet_type] = np.array(triplet_type_to_id[triplet_type], dtype=np.int32)
+
+    ### relation to its triplet type by id
+    relation_to_triplet_type = dict()
+    
+    with open(os.path.join(args.overall_data_path, 'relations_to_triplet_type.txt')) as fin:
+        for line in fin:
+            triplet_type, relation = line.strip().split('\t')
+            id = relation2id[relation]
+            relation_to_triplet_type[id] = triplet_type
+    ## relation to possible relations
+    triplet_type_to_id_relation = dict()
+    for id in relation_to_triplet_type:
+        triplet_type = relation_to_triplet_type[id]
+        if triplet_type not in triplet_type_to_id_relation:
+            triplet_type_to_id_relation[triplet_type] = []
+        triplet_type_to_id_relation[triplet_type].append(id)
+
     # Read regions for Countries S* datasets
     if args.countries:
         regions = list()
@@ -238,7 +284,7 @@ def main(args):
     if args.do_train:
         # Set training dataloader iterator
         train_dataloader_head = DataLoader(
-            TrainDataset(train_triples, nentity, nrelation, args.negative_sample_size, 'head-batch'), 
+            TrainDataset(train_triples, nentity, nrelation, args.negative_sample_size, 'head-batch', negative_sample_type = args.negative_sample_type_train, entity2id=entity2id, data_path=args.data_path), 
             batch_size=args.batch_size,
             shuffle=True, 
             num_workers=max(1, args.cpu_num//2),
@@ -246,7 +292,7 @@ def main(args):
         )
         
         train_dataloader_tail = DataLoader(
-            TrainDataset(train_triples, nentity, nrelation, args.negative_sample_size, 'tail-batch'), 
+            TrainDataset(train_triples, nentity, nrelation, args.negative_sample_size, 'tail-batch', entity2id=entity2id, data_path=args.data_path, negative_sample_type = args.negative_sample_type_train), 
             batch_size=args.batch_size,
             shuffle=True, 
             num_workers=max(1, args.cpu_num//2),
@@ -272,6 +318,16 @@ def main(args):
         checkpoint = torch.load(os.path.join(args.init_checkpoint, 'checkpoint'))
         init_step = checkpoint['step']
         kge_model.load_state_dict(checkpoint['model_state_dict'])
+        
+        ## buz modification -- stratified negative sampling
+        if args.triplet_type != 'all' and args.negative_sample_type_test != 'uniform':
+            possible_entities = triplet_type_to_id[args.triplet_type] 
+            possible_relations = triplet_type_to_id_relation[args.triplet_type]
+            kge_model.entity_embedding.data = kge_model.entity_embedding.data[possible_entities]
+            kge_model.relation_embedding.data = kge_model.relation_embedding.data[possible_relations]
+    
+
+
         if args.do_train:
             current_learning_rate = checkpoint['current_learning_rate']
             warm_up_steps = checkpoint['warm_up_steps']
@@ -356,6 +412,7 @@ def main(args):
         logging.info('Evaluating on Training Dataset...')
         metrics = kge_model.test_step(kge_model, train_triples, all_true_triples, args)
         log_metrics('Test', step, metrics)
+
         
 if __name__ == '__main__':
     main(parse_args())

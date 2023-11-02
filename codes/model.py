@@ -426,3 +426,4 @@ class KGEModel(nn.Module):
                 metrics[metric] = sum([log[metric] for log in logs])/len(logs)
 
         return metrics
+        
