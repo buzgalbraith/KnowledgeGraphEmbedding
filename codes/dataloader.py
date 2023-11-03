@@ -41,7 +41,7 @@ class TrainDataset(Dataset):
             with open(path) as fin:
                 for line in fin:
                     entity_type , entity = line.strip().split('\t')
-                    entity_id = self.entity2id[entity.strip()]
+                    entity_id = self.entity2id[entity]
                     entity_type_hash[int(entity_id)] = entity_type
             return entity_type_hash
     
@@ -61,7 +61,7 @@ class TrainDataset(Dataset):
             ## make a dictionary
             possible_entities = []
             for entity in entities['entities'].values:
-                possible_entities.append(int(self.entity2id[entity.strip()]))    
+                possible_entities.append(int(self.entity2id[entity]))    
             possible_entity_hash[triplet_type] = np.array(possible_entities) 
         return possible_entity_hash
     def __len__(self):
@@ -180,13 +180,14 @@ class TrainDataset(Dataset):
 
     
 class TestDataset(Dataset):
-    def __init__(self, triples, all_true_triples, nentity, nrelation, mode):
+    def __init__(self, triples, all_true_triples, nentity, nrelation, mode, possible_entities=None):
         self.len = len(triples)
         self.triple_set = set(all_true_triples)
         self.triples = triples
         self.nentity = nentity
         self.nrelation = nrelation
         self.mode = mode
+        self.possible_entities = possible_entities  
 
     def __len__(self):
         return self.len
@@ -195,12 +196,20 @@ class TestDataset(Dataset):
         head, relation, tail = self.triples[idx]
 
         if self.mode == 'head-batch':
-            tmp = [(0, rand_head) if (rand_head, relation, tail) not in self.triple_set
-                   else (-1, head) for rand_head in range(self.nentity)]
+            if self.possible_entities is None:
+                tmp = [(0, rand_head) if (rand_head, relation, tail) not in self.triple_set
+                    else (-1, head) for rand_head in range(self.nentity)]
+            else:
+                tmp = [(0, rand_head) if (rand_head, relation, tail) not in self.triple_set
+                    else (-1, head) for rand_head in self.possible_entities]
             tmp[head] = (0, head)
         elif self.mode == 'tail-batch':
-            tmp = [(0, rand_tail) if (head, relation, rand_tail) not in self.triple_set
-                   else (-1, tail) for rand_tail in range(self.nentity)]
+            if self.possible_entities is None:
+                tmp = [(0, rand_tail) if (head, relation, rand_tail) not in self.triple_set
+                    else (-1, tail) for rand_tail in range(self.nentity)]
+            else:
+                tmp = [(0, rand_tail) if (head, relation, rand_tail) not in self.triple_set and rand_tail
+                    else (-1, tail) for rand_tail in self.possible_entities]
             tmp[tail] = (0, tail)
         else:
             raise ValueError('negative batch mode %s not supported' % self.mode)

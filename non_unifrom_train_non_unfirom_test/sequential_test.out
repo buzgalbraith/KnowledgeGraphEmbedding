@@ -1,0 +1,43 @@
+Job start at: Thu Nov  2 15:37:10 EDT 2023
+----------------------
+triplet type :  cancer_to_drug
+----------------------
+1.12.0+cu102
+Start Training......
+triplet type = cancer_to_drug
+2023-11-02 15:37:25,517 INFO     Model: RotatE
+2023-11-02 15:37:25,517 INFO     Data Path: data/cancer_to_drug
+2023-11-02 15:37:25,518 INFO     #entity: 22873
+2023-11-02 15:37:25,518 INFO     #relation: 151
+2023-11-02 15:37:25,534 INFO     #train: 680
+2023-11-02 15:37:25,541 INFO     #valid: 90
+2023-11-02 15:37:25,593 INFO     #test: 137
+2023-11-02 15:37:25,912 INFO     Model Parameter Configuration:
+2023-11-02 15:37:25,912 INFO     Parameter gamma: torch.Size([1]), require_grad = False
+2023-11-02 15:37:25,912 INFO     Parameter embedding_range: torch.Size([1]), require_grad = False
+2023-11-02 15:37:25,912 INFO     Parameter entity_embedding: torch.Size([22873, 2000]), require_grad = True
+2023-11-02 15:37:25,912 INFO     Parameter relation_embedding: torch.Size([151, 1000]), require_grad = True
+2023-11-02 15:37:38,033 INFO     Ramdomly Initializing RotatE Model...
+2023-11-02 15:37:38,034 INFO     Start Training...
+2023-11-02 15:37:38,034 INFO     init_step = 0
+2023-11-02 15:37:38,034 INFO     batch_size = 1024
+2023-11-02 15:37:38,034 INFO     negative_adversarial_sampling = 1
+2023-11-02 15:37:38,034 INFO     hidden_dim = 1000
+2023-11-02 15:37:38,034 INFO     gamma = 24.000000
+2023-11-02 15:37:38,034 INFO     negative_adversarial_sampling = True
+2023-11-02 15:37:38,034 INFO     adversarial_temperature = 1.000000
+2023-11-02 15:37:38,034 INFO     learning_rate = 0
+2023-11-02 15:37:40,151 INFO     Training average positive_sample_loss at step 0: 3.207451
+2023-11-02 15:37:40,151 INFO     Training average negative_sample_loss at step 0: 0.051718
+2023-11-02 15:37:40,151 INFO     Training average loss at step 0: 1.629585
+2023-11-02 15:37:40,151 INFO     Evaluating on Valid Dataset...
+2023-11-02 15:37:40,799 INFO     Evaluating the model... (0/12)
+2023-11-02 15:37:42,287 INFO     Valid MRR at step 0: 0.000711
+2023-11-02 15:37:42,288 INFO     Valid MR at step 0: 10311.600000
+2023-11-02 15:37:42,288 INFO     Valid HITS@1 at step 0: 0.000000
+2023-11-02 15:37:42,288 INFO     Valid HITS@3 at step 0: 0.000000
+2023-11-02 15:37:42,288 INFO     Valid HITS@10 at step 0: 0.000000
+2023-11-02 15:38:44,540 INFO     Training average positive_sample_loss at step 100: 0.474917
+2023-11-02 15:38:44,542 INFO     Training average negative_sample_loss at step 100: 0.224621
+2023-11-02 15:38:44,543 INFO     Training average loss at step 100: 0.349769
+slurmstepd: error: *** JOB 39561593 ON gr007 CANCELLED AT 2023-11-02T15:38:53 ***

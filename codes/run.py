@@ -9,7 +9,7 @@ import json
 import logging
 import os
 import random
-
+import torch.nn as nn 
 import numpy as np
 import torch
 
@@ -201,38 +201,57 @@ def main(args):
     ## buz modification.
     ### entity to its triplet type by id  (could extend this to like head and tail or what ever, but we can look at that later)
     entity_to_triplet_type = dict() 
-    with open(os.path.join(args.overall_data_path, 'entity_to_triplet_type.txt')) as fin:
-        for line in fin:
-            triplet_type, entity = line.strip().split('\t')
-            id = entity2id[entity]
-            entity_to_triplet_type[id] = triplet_type
-    triplet_type_to_id = dict()
-    ## triplet type to possible entities
-    for id in entity_to_triplet_type:
-        triplet_type = entity_to_triplet_type[id]
-        if triplet_type not in triplet_type_to_id:
-            triplet_type_to_id[triplet_type] = []
-        triplet_type_to_id[triplet_type].append(id)
+    # with open(os.path.join(args.overall_data_path, 'entity_to_triplet_type.txt')) as fin:
+    #     for line in fin:
+    #         triplet_type, entity = line.strip().split('\t')
+    #         id = entity2id[entity]
+    #         entity_to_triplet_type[id] = triplet_type
 
     
-    for triplet_type in triplet_type_to_id:
-        triplet_type_to_id[triplet_type] = np.array(triplet_type_to_id[triplet_type], dtype=np.int32)
-
-    ### relation to its triplet type by id
-    relation_to_triplet_type = dict()
-    
-    with open(os.path.join(args.overall_data_path, 'relations_to_triplet_type.txt')) as fin:
+    ## here we assume that we are given the path to the training data any way right 
+    with open(os.path.join(args.data_path, 'entities.dict')) as fin:
+        possible_entities = []
         for line in fin:
-            triplet_type, relation = line.strip().split('\t')
-            id = relation2id[relation]
-            relation_to_triplet_type[id] = triplet_type
-    ## relation to possible relations
-    triplet_type_to_id_relation = dict()
-    for id in relation_to_triplet_type:
-        triplet_type = relation_to_triplet_type[id]
-        if triplet_type not in triplet_type_to_id_relation:
-            triplet_type_to_id_relation[triplet_type] = []
-        triplet_type_to_id_relation[triplet_type].append(id)
+            eid, entity = line.strip().split('\t')
+            possible_entities.append(entity2id[entity])
+    ## go same to get possible relations 
+    with open(os.path.join(args.data_path, 'relations.dict')) as fin:
+        possible_relations = []
+        for line in fin:
+            rid, relation = line.strip().split('\t')
+            possible_relations.append(relation2id[relation])
+    
+    
+    # triplet_type_to_id = dict()
+    # ## triplet type to possible entities 
+    # ## i thnk we need to modify the other file to have head and tail type.
+    # for id in entity_to_triplet_type:
+    #     triplet_type = entity_to_triplet_type[id]
+    #     if triplet_type not in triplet_type_to_id:
+    #         triplet_type_to_id[triplet_type] = []
+    #     triplet_type_to_id[triplet_type].append(id)
+
+    
+    # for triplet_type in triplet_type_to_id:
+    #     triplet_type_to_id[triplet_type] = np.array(triplet_type_to_id[triplet_type], dtype=np.int32)
+
+    # ### relation to its triplet type by id
+    # relation_to_triplet_type = dict()
+    
+    # with open(os.path.join(args.overall_data_path, 'relations_to_triplet_type.txt')) as fin:
+    #     for line in fin:
+    #         triplet_type, relation = line.strip().split('\t')
+    #         id = relation2id[relation]
+    #         relation_to_triplet_type[id] = triplet_type
+    # ## relation to possible relations
+    # triplet_type_to_id_relation = dict()
+    # for id in relation_to_triplet_type:
+    #     triplet_type = relation_to_triplet_type[id]
+    #     if triplet_type not in triplet_type_to_id_relation:
+    #         triplet_type_to_id_relation[triplet_type] = []
+    #     triplet_type_to_id_relation[triplet_type].append(id)
+    # for triplet_type in triplet_type_to_id_relation:
+    #     triplet_type_to_id_relation[triplet_type] = np.array(triplet_type_to_id_relation[triplet_type], dtype=np.int32)
 
     # Read regions for Countries S* datasets
     if args.countries:
@@ -275,7 +294,7 @@ def main(args):
     )
     
     logging.info('Model Parameter Configuration:')
-    for name, param in kge_model.named_parameters():
+    for name, param in kge_model.named_parameters():  
         logging.info('Parameter %s: %s, require_grad = %s' % (name, str(param.size()), str(param.requires_grad)))
 
     if args.cuda:
@@ -321,11 +340,42 @@ def main(args):
         
         ## buz modification -- stratified negative sampling
         if args.triplet_type != 'all' and args.negative_sample_type_test != 'uniform':
-            possible_entities = triplet_type_to_id[args.triplet_type] 
-            possible_relations = triplet_type_to_id_relation[args.triplet_type]
+            # possible_entities = triplet_type_to_id[args.triplet_type] 
+            # possible_relations = triplet_type_to_id_relation[args.triplet_type]
+            # print("possible entities = {0}".format(possible_entities))
+            # print("possible relations = {0}".format(possible_relations))
             kge_model.entity_embedding.data = kge_model.entity_embedding.data[possible_entities]
             kge_model.relation_embedding.data = kge_model.relation_embedding.data[possible_relations]
-    
+            kge_model.nentity = len(possible_entities)
+            kge_model.nrelation = len(possible_relations)
+            kge_model.entity_embedding = torch.nn.Parameter(kge_model.entity_embedding)
+            kge_model.relation_embedding = torch.nn.Parameter(kge_model.relation_embedding)
+            kge_model.embedding_range = nn.Parameter(kge_model.embedding_range)
+            ## we need to set the entities indexes to the new indexes
+            ## we need to set the relations indexes to the new indexes
+            ## need a dict mapping entity2id to new id 
+
+            entityid2newid = dict()
+            relationid2newid = dict()
+            for i in range(len(possible_entities)):
+                entityid2newid[possible_entities[i]] = i 
+            for i in range(len(possible_relations)):
+                relationid2newid[possible_relations[i]] = i
+            kge_model.entityid2newid = entityid2newid
+            kge_model.relationid2newid = relationid2newid
+
+            ## add possible entices to the args thing
+            args.possible_entities = possible_entities
+            args.possible_relations = possible_relations
+            if nrelation==1:
+                kge_model.special_relation = possible_relations[0]
+
+
+            ## update emebding range
+            # kge_model.embedding_range = nn.Parameter(
+            # print(kge_model.embedding_range)
+            # print(kge_model.embedding_range.item())
+            ## might need a way to map the entity_embedding to like there adjusted ids. 
 
 
         if args.do_train:

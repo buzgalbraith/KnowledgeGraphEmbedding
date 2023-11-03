@@ -27,7 +27,9 @@ class KGEModel(nn.Module):
         self.nrelation = nrelation
         self.hidden_dim = hidden_dim
         self.epsilon = 2.0
-        
+        self.special_relation = None
+        self.entityid2newid = None
+        self.relationid2newid = None
         self.gamma = nn.Parameter(
             torch.Tensor([gamma]), 
             requires_grad=False
@@ -87,13 +89,16 @@ class KGEModel(nn.Module):
                 dim=0, 
                 index=sample[:,0]
             ).unsqueeze(1)
-            
-            relation = torch.index_select(
-                self.relation_embedding, 
-                dim=0, 
-                index=sample[:,1]
-            ).unsqueeze(1)
-            
+            if self.nrelation>1:
+                relation = torch.index_select(
+                    self.relation_embedding, 
+                    dim=0, 
+                    index=sample[:,1]
+                ).unsqueeze(1)
+            else:
+                ## make it just a vector with the special embeding value
+                relation = torch.zeros((batch_size, 1, self.relation_dim)).cuda()
+                relation[:,0,:] = self.relation_embedding[0,:]
             tail = torch.index_select(
                 self.entity_embedding, 
                 dim=0, 
@@ -103,28 +108,46 @@ class KGEModel(nn.Module):
         elif mode == 'head-batch':
             tail_part, head_part = sample
             batch_size, negative_sample_size = head_part.size(0), head_part.size(1)
-            
+            if self.entityid2newid is not None and self.relationid2newid is not None:
+                for i in range(batch_size):
+                    tail_part[i,2] = self.entityid2newid[tail_part[i,2].item()] 
+                    tail_part[i,1] = self.relationid2newid[tail_part[i,1].item()]
+                for i in range(head_part.view(-1).shape[0]):
+                    head_part.view(-1)[i] = self.entityid2newid[head_part.view(-1)[i].item()]
+
             head = torch.index_select(
                 self.entity_embedding, 
                 dim=0, 
                 index=head_part.view(-1)
             ).view(batch_size, negative_sample_size, -1)
-            
+
             relation = torch.index_select(
                 self.relation_embedding, 
                 dim=0, 
                 index=tail_part[:, 1]
             ).unsqueeze(1)
-            
             tail = torch.index_select(
                 self.entity_embedding, 
                 dim=0, 
                 index=tail_part[:, 2]
             ).unsqueeze(1)
-            
+            #.unsqueeze(1)
         elif mode == 'tail-batch':
             head_part, tail_part = sample
             batch_size, negative_sample_size = tail_part.size(0), tail_part.size(1)
+
+            if self.entityid2newid is not None and self.relationid2newid is not None:
+                for i in range(batch_size):
+                    try:
+                        head_part[i,0] = self.entityid2newid[head_part[i,0].item()] 
+                    except:
+                        print("head part", head_part.view(-1))
+                        print("head_part[i,0].item() ", head_part[i,0].item())
+                        print("self.entityid2newid ", self.entityid2newid)
+                        print("self.entityid2newid[head_part[i,0].item()] ", self.entityid2newid[head_part[i,0].item()])
+                    head_part[i,1] = self.relationid2newid[head_part[i,1].item()]
+                for i in range(tail_part.view(-1).shape[0]):
+                    tail_part.view(-1)[i] = self.entityid2newid[tail_part.view(-1)[i].item()]
             
             head = torch.index_select(
                 self.entity_embedding, 
@@ -204,9 +227,11 @@ class KGEModel(nn.Module):
         re_tail, im_tail = torch.chunk(tail, 2, dim=2)
 
         #Make phases of relations uniformly distributed in [-pi, pi]
-
+        # print("entering phase ")
+        # print(relation.shape, "relation")
+        # print(self.embedding_range, "embedding range")
         phase_relation = relation/(self.embedding_range.item()/pi)
-
+        # print("exiting phase ")
         re_relation = torch.cos(phase_relation)
         im_relation = torch.sin(phase_relation)
 
@@ -345,26 +370,34 @@ class KGEModel(nn.Module):
         else:
             #Otherwise use standard (filtered) MRR, MR, HITS@1, HITS@3, and HITS@10 metrics
             #Prepare dataloader for evaluation
+           # print("at pass, ", args.possible_entities)
             test_dataloader_head = DataLoader(
                 TestDataset(
                     test_triples, 
                     all_true_triples, 
-                    args.nentity, 
-                    args.nrelation, 
-                    'head-batch'
+                    # args.nentity, 
+                    # args.nrelation, 
+                    # buz modification- setting n-entities to however many we see 
+                    model.nentity,
+                    model.nrelation,
+                    'head-batch', possible_entities=args.possible_entities
                 ), 
                 batch_size=args.test_batch_size,
                 num_workers=max(1, args.cpu_num//2), 
                 collate_fn=TestDataset.collate_fn
             )
+            
 
             test_dataloader_tail = DataLoader(
                 TestDataset(
                     test_triples, 
                     all_true_triples, 
-                    args.nentity, 
-                    args.nrelation, 
-                    'tail-batch'
+                    # args.nentity, 
+                    # args.nrelation, 
+                    ## buz modification- setting n-entities to however many we see 
+                    model.nentity,
+                    model.nrelation,
+                    'tail-batch', possible_entities=args.possible_entities
                 ), 
                 batch_size=args.test_batch_size,
                 num_workers=max(1, args.cpu_num//2), 

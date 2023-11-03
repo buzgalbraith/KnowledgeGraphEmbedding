@@ -1,0 +1,217 @@
+Job start at: Thu Nov  2 19:18:22 EDT 2023
+1.12.0+cu102
+Start Training......
+triplet type = all
+2023-11-02 19:18:35,632 INFO     Model: RotatE
+2023-11-02 19:18:35,632 INFO     Data Path: data/MSK
+2023-11-02 19:18:35,632 INFO     #entity: 22873
+2023-11-02 19:18:35,633 INFO     #relation: 151
+2023-11-02 19:18:37,987 INFO     #train: 2649576
+2023-11-02 19:18:38,362 INFO     #valid: 353276
+2023-11-02 19:18:38,890 INFO     #test: 529916
+2023-11-02 19:18:39,256 INFO     Model Parameter Configuration:
+2023-11-02 19:18:39,256 INFO     Parameter gamma: torch.Size([1]), require_grad = False
+2023-11-02 19:18:39,256 INFO     Parameter embedding_range: torch.Size([1]), require_grad = False
+2023-11-02 19:18:39,256 INFO     Parameter entity_embedding: torch.Size([22873, 2000]), require_grad = True
+2023-11-02 19:18:39,257 INFO     Parameter relation_embedding: torch.Size([151, 1000]), require_grad = True
+2023-11-02 19:19:03,393 INFO     Ramdomly Initializing RotatE Model...
+2023-11-02 19:19:03,393 INFO     Start Training...
+2023-11-02 19:19:03,393 INFO     init_step = 0
+2023-11-02 19:19:03,393 INFO     batch_size = 1024
+2023-11-02 19:19:03,393 INFO     negative_adversarial_sampling = 1
+2023-11-02 19:19:03,393 INFO     hidden_dim = 1000
+2023-11-02 19:19:03,393 INFO     gamma = 24.000000
+2023-11-02 19:19:03,393 INFO     negative_adversarial_sampling = True
+2023-11-02 19:19:03,393 INFO     adversarial_temperature = 1.000000
+2023-11-02 19:19:03,393 INFO     learning_rate = 0
+2023-11-02 19:19:06,762 INFO     Training average positive_sample_loss at step 0: 3.147245
+2023-11-02 19:19:06,763 INFO     Training average negative_sample_loss at step 0: 0.064246
+2023-11-02 19:19:06,763 INFO     Training average loss at step 0: 1.605745
+2023-11-02 19:19:06,763 INFO     Evaluating on Valid Dataset...
+2023-11-02 19:19:09,252 INFO     Evaluating the model... (0/44160)
+2023-11-02 19:20:00,406 INFO     Evaluating the model... (1000/44160)
+2023-11-02 19:20:51,824 INFO     Evaluating the model... (2000/44160)
+2023-11-02 19:21:43,596 INFO     Evaluating the model... (3000/44160)
+2023-11-02 19:22:34,975 INFO     Evaluating the model... (4000/44160)
+2023-11-02 19:23:27,240 INFO     Evaluating the model... (5000/44160)
+2023-11-02 19:24:19,096 INFO     Evaluating the model... (6000/44160)
+2023-11-02 19:25:12,272 INFO     Evaluating the model... (7000/44160)
+2023-11-02 19:26:04,139 INFO     Evaluating the model... (8000/44160)
+2023-11-02 19:26:57,713 INFO     Evaluating the model... (9000/44160)
+2023-11-02 19:27:50,285 INFO     Evaluating the model... (10000/44160)
+2023-11-02 19:28:44,481 INFO     Evaluating the model... (11000/44160)
+2023-11-02 19:29:37,124 INFO     Evaluating the model... (12000/44160)
+2023-11-02 19:30:31,218 INFO     Evaluating the model... (13000/44160)
+2023-11-02 19:31:23,830 INFO     Evaluating the model... (14000/44160)
+2023-11-02 19:32:18,663 INFO     Evaluating the model... (15000/44160)
+2023-11-02 19:33:11,543 INFO     Evaluating the model... (16000/44160)
+2023-11-02 19:34:06,204 INFO     Evaluating the model... (17000/44160)
+2023-11-02 19:34:59,159 INFO     Evaluating the model... (18000/44160)
+2023-11-02 19:35:52,579 INFO     Evaluating the model... (19000/44160)
+2023-11-02 19:36:47,068 INFO     Evaluating the model... (20000/44160)
+2023-11-02 19:37:40,093 INFO     Evaluating the model... (21000/44160)
+2023-11-02 19:38:35,143 INFO     Evaluating the model... (22000/44160)
+2023-11-02 19:39:24,702 INFO     Evaluating the model... (23000/44160)
+2023-11-02 19:40:13,907 INFO     Evaluating the model... (24000/44160)
+2023-11-02 19:41:02,651 INFO     Evaluating the model... (25000/44160)
+2023-11-02 19:41:52,765 INFO     Evaluating the model... (26000/44160)
+2023-11-02 19:42:41,481 INFO     Evaluating the model... (27000/44160)
+2023-11-02 19:43:31,186 INFO     Evaluating the model... (28000/44160)
+2023-11-02 19:44:20,401 INFO     Evaluating the model... (29000/44160)
+2023-11-02 19:45:10,648 INFO     Evaluating the model... (30000/44160)
+2023-11-02 19:46:00,326 INFO     Evaluating the model... (31000/44160)
+2023-11-02 19:46:51,756 INFO     Evaluating the model... (32000/44160)
+2023-11-02 19:47:41,818 INFO     Evaluating the model... (33000/44160)
+2023-11-02 19:48:33,632 INFO     Evaluating the model... (34000/44160)
+2023-11-02 19:49:23,648 INFO     Evaluating the model... (35000/44160)
+2023-11-02 19:50:15,358 INFO     Evaluating the model... (36000/44160)
+2023-11-02 19:51:05,452 INFO     Evaluating the model... (37000/44160)
+2023-11-02 19:51:57,597 INFO     Evaluating the model... (38000/44160)
+2023-11-02 19:52:47,648 INFO     Evaluating the model... (39000/44160)
+2023-11-02 19:53:39,265 INFO     Evaluating the model... (40000/44160)
+2023-11-02 19:54:29,864 INFO     Evaluating the model... (41000/44160)
+2023-11-02 19:55:19,928 INFO     Evaluating the model... (42000/44160)
+2023-11-02 19:56:12,080 INFO     Evaluating the model... (43000/44160)
+2023-11-02 19:57:02,123 INFO     Evaluating the model... (44000/44160)
+2023-11-02 19:57:12,532 INFO     Valid MRR at step 0: 0.001041
+2023-11-02 19:57:12,532 INFO     Valid MR at step 0: 7104.070705
+2023-11-02 19:57:12,532 INFO     Valid HITS@1 at step 0: 0.000010
+2023-11-02 19:57:12,533 INFO     Valid HITS@3 at step 0: 0.000318
+2023-11-02 19:57:12,533 INFO     Valid HITS@10 at step 0: 0.001231
+2023-11-02 19:57:21,672 INFO     Training average positive_sample_loss at step 100: 1.389802
+2023-11-02 19:57:21,672 INFO     Training average negative_sample_loss at step 100: 0.484913
+2023-11-02 19:57:21,672 INFO     Training average loss at step 100: 0.937358
+2023-11-02 19:57:30,191 INFO     Training average positive_sample_loss at step 200: 0.810427
+2023-11-02 19:57:30,191 INFO     Training average negative_sample_loss at step 200: 0.474463
+2023-11-02 19:57:30,191 INFO     Training average loss at step 200: 0.642445
+2023-11-02 19:57:34,620 INFO     Change learning_rate to 0.000010 at step 250
+2023-11-02 19:57:39,053 INFO     Training average positive_sample_loss at step 300: 0.662324
+2023-11-02 19:57:39,053 INFO     Training average negative_sample_loss at step 300: 0.414839
+2023-11-02 19:57:39,053 INFO     Training average loss at step 300: 0.538582
+2023-11-02 19:57:47,952 INFO     Training average positive_sample_loss at step 400: 0.663106
+2023-11-02 19:57:47,952 INFO     Training average negative_sample_loss at step 400: 0.411537
+2023-11-02 19:57:47,952 INFO     Training average loss at step 400: 0.537322
+2023-11-02 19:57:58,205 INFO     Evaluating on Valid Dataset...
+2023-11-02 19:58:00,711 INFO     Evaluating the model... (0/44160)
+2023-11-02 19:58:52,449 INFO     Evaluating the model... (1000/44160)
+2023-11-02 19:59:44,256 INFO     Evaluating the model... (2000/44160)
+2023-11-02 20:00:36,145 INFO     Evaluating the model... (3000/44160)
+2023-11-02 20:01:29,035 INFO     Evaluating the model... (4000/44160)
+2023-11-02 20:02:21,354 INFO     Evaluating the model... (5000/44160)
+2023-11-02 20:03:14,619 INFO     Evaluating the model... (6000/44160)
+2023-11-02 20:04:06,553 INFO     Evaluating the model... (7000/44160)
+2023-11-02 20:04:59,610 INFO     Evaluating the model... (8000/44160)
+2023-11-02 20:05:52,838 INFO     Evaluating the model... (9000/44160)
+2023-11-02 20:06:45,506 INFO     Evaluating the model... (10000/44160)
+2023-11-02 20:07:39,577 INFO     Evaluating the model... (11000/44160)
+2023-11-02 20:08:31,918 INFO     Evaluating the model... (12000/44160)
+2023-11-02 20:09:26,273 INFO     Evaluating the model... (13000/44160)
+2023-11-02 20:10:19,025 INFO     Evaluating the model... (14000/44160)
+2023-11-02 20:11:13,017 INFO     Evaluating the model... (15000/44160)
+2023-11-02 20:12:05,708 INFO     Evaluating the model... (16000/44160)
+2023-11-02 20:13:00,829 INFO     Evaluating the model... (17000/44160)
+2023-11-02 20:13:53,751 INFO     Evaluating the model... (18000/44160)
+2023-11-02 20:14:48,744 INFO     Evaluating the model... (19000/44160)
+2023-11-02 20:15:41,622 INFO     Evaluating the model... (20000/44160)
+2023-11-02 20:16:36,585 INFO     Evaluating the model... (21000/44160)
+2023-11-02 20:17:29,593 INFO     Evaluating the model... (22000/44160)
+2023-11-02 20:18:20,091 INFO     Evaluating the model... (23000/44160)
+2023-11-02 20:19:08,786 INFO     Evaluating the model... (24000/44160)
+2023-11-02 20:19:58,482 INFO     Evaluating the model... (25000/44160)
+2023-11-02 20:20:47,739 INFO     Evaluating the model... (26000/44160)
+2023-11-02 20:21:37,473 INFO     Evaluating the model... (27000/44160)
+2023-11-02 20:22:26,800 INFO     Evaluating the model... (28000/44160)
+2023-11-02 20:23:17,375 INFO     Evaluating the model... (29000/44160)
+2023-11-02 20:24:08,157 INFO     Evaluating the model... (30000/44160)
+2023-11-02 20:24:58,289 INFO     Evaluating the model... (31000/44160)
+2023-11-02 20:25:50,233 INFO     Evaluating the model... (32000/44160)
+2023-11-02 20:26:40,395 INFO     Evaluating the model... (33000/44160)
+2023-11-02 20:27:32,750 INFO     Evaluating the model... (34000/44160)
+2023-11-02 20:28:22,956 INFO     Evaluating the model... (35000/44160)
+2023-11-02 20:29:14,963 INFO     Evaluating the model... (36000/44160)
+2023-11-02 20:30:05,129 INFO     Evaluating the model... (37000/44160)
+2023-11-02 20:30:57,806 INFO     Evaluating the model... (38000/44160)
+2023-11-02 20:31:47,915 INFO     Evaluating the model... (39000/44160)
+2023-11-02 20:32:39,851 INFO     Evaluating the model... (40000/44160)
+2023-11-02 20:33:30,019 INFO     Evaluating the model... (41000/44160)
+2023-11-02 20:34:22,618 INFO     Evaluating the model... (42000/44160)
+2023-11-02 20:35:13,151 INFO     Evaluating the model... (43000/44160)
+2023-11-02 20:36:05,404 INFO     Evaluating the model... (44000/44160)
+2023-11-02 20:36:14,138 INFO     Valid MRR at step 499: 0.024559
+2023-11-02 20:36:14,139 INFO     Valid MR at step 499: 3176.353677
+2023-11-02 20:36:14,139 INFO     Valid HITS@1 at step 499: 0.010165
+2023-11-02 20:36:14,139 INFO     Valid HITS@3 at step 499: 0.022341
+2023-11-02 20:36:14,139 INFO     Valid HITS@10 at step 499: 0.050128
+2023-11-02 20:36:14,139 INFO     Evaluating on Test Dataset...
+2023-11-02 20:36:16,434 INFO     Evaluating the model... (0/66240)
+2023-11-02 20:37:08,126 INFO     Evaluating the model... (1000/66240)
+2023-11-02 20:37:59,917 INFO     Evaluating the model... (2000/66240)
+2023-11-02 20:38:51,312 INFO     Evaluating the model... (3000/66240)
+2023-11-02 20:39:43,111 INFO     Evaluating the model... (4000/66240)
+2023-11-02 20:40:35,028 INFO     Evaluating the model... (5000/66240)
+2023-11-02 20:41:27,345 INFO     Evaluating the model... (6000/66240)
+2023-11-02 20:42:19,263 INFO     Evaluating the model... (7000/66240)
+2023-11-02 20:43:13,034 INFO     Evaluating the model... (8000/66240)
+2023-11-02 20:44:05,719 INFO     Evaluating the model... (9000/66240)
+2023-11-02 20:44:59,423 INFO     Evaluating the model... (10000/66240)
+2023-11-02 20:45:52,205 INFO     Evaluating the model... (11000/66240)
+2023-11-02 20:46:46,600 INFO     Evaluating the model... (12000/66240)
+2023-11-02 20:47:39,709 INFO     Evaluating the model... (13000/66240)
+2023-11-02 20:48:32,724 INFO     Evaluating the model... (14000/66240)
+2023-11-02 20:49:27,415 INFO     Evaluating the model... (15000/66240)
+2023-11-02 20:50:20,375 INFO     Evaluating the model... (16000/66240)
+2023-11-02 20:51:15,385 INFO     Evaluating the model... (17000/66240)
+2023-11-02 20:52:08,323 INFO     Evaluating the model... (18000/66240)
+2023-11-02 20:53:03,538 INFO     Evaluating the model... (19000/66240)
+2023-11-02 20:53:56,330 INFO     Evaluating the model... (20000/66240)
+2023-11-02 20:54:51,225 INFO     Evaluating the model... (21000/66240)
+2023-11-02 20:55:44,379 INFO     Evaluating the model... (22000/66240)
+2023-11-02 20:56:39,893 INFO     Evaluating the model... (23000/66240)
+2023-11-02 20:57:33,008 INFO     Evaluating the model... (24000/66240)
+2023-11-02 20:58:27,750 INFO     Evaluating the model... (25000/66240)
+2023-11-02 20:59:20,886 INFO     Evaluating the model... (26000/66240)
+2023-11-02 21:00:15,958 INFO     Evaluating the model... (27000/66240)
+2023-11-02 21:01:09,059 INFO     Evaluating the model... (28000/66240)
+2023-11-02 21:02:02,890 INFO     Evaluating the model... (29000/66240)
+2023-11-02 21:02:56,545 INFO     Evaluating the model... (30000/66240)
+2023-11-02 21:03:49,678 INFO     Evaluating the model... (31000/66240)
+2023-11-02 21:04:44,544 INFO     Evaluating the model... (32000/66240)
+2023-11-02 21:05:37,770 INFO     Evaluating the model... (33000/66240)
+2023-11-02 21:06:29,439 INFO     Evaluating the model... (34000/66240)
+2023-11-02 21:07:19,066 INFO     Evaluating the model... (35000/66240)
+2023-11-02 21:08:07,833 INFO     Evaluating the model... (36000/66240)
+2023-11-02 21:08:56,580 INFO     Evaluating the model... (37000/66240)
+2023-11-02 21:09:46,892 INFO     Evaluating the model... (38000/66240)
+2023-11-02 21:10:36,656 INFO     Evaluating the model... (39000/66240)
+2023-11-02 21:11:27,922 INFO     Evaluating the model... (40000/66240)
+2023-11-02 21:12:17,689 INFO     Evaluating the model... (41000/66240)
+2023-11-02 21:13:08,846 INFO     Evaluating the model... (42000/66240)
+2023-11-02 21:13:59,035 INFO     Evaluating the model... (43000/66240)
+2023-11-02 21:14:50,983 INFO     Evaluating the model... (44000/66240)
+2023-11-02 21:15:41,188 INFO     Evaluating the model... (45000/66240)
+2023-11-02 21:16:33,547 INFO     Evaluating the model... (46000/66240)
+2023-11-02 21:17:23,830 INFO     Evaluating the model... (47000/66240)
+2023-11-02 21:18:16,014 INFO     Evaluating the model... (48000/66240)
+2023-11-02 21:19:06,370 INFO     Evaluating the model... (49000/66240)
+2023-11-02 21:19:59,969 INFO     Evaluating the model... (50000/66240)
+2023-11-02 21:20:50,746 INFO     Evaluating the model... (51000/66240)
+2023-11-02 21:21:43,022 INFO     Evaluating the model... (52000/66240)
+2023-11-02 21:22:34,321 INFO     Evaluating the model... (53000/66240)
+2023-11-02 21:23:25,541 INFO     Evaluating the model... (54000/66240)
+2023-11-02 21:24:19,549 INFO     Evaluating the model... (55000/66240)
+2023-11-02 21:25:10,869 INFO     Evaluating the model... (56000/66240)
+2023-11-02 21:26:04,162 INFO     Evaluating the model... (57000/66240)
+2023-11-02 21:26:55,287 INFO     Evaluating the model... (58000/66240)
+2023-11-02 21:27:48,978 INFO     Evaluating the model... (59000/66240)
+2023-11-02 21:28:40,329 INFO     Evaluating the model... (60000/66240)
+2023-11-02 21:29:34,667 INFO     Evaluating the model... (61000/66240)
+2023-11-02 21:30:25,925 INFO     Evaluating the model... (62000/66240)
+2023-11-02 21:31:19,811 INFO     Evaluating the model... (63000/66240)
+2023-11-02 21:32:10,760 INFO     Evaluating the model... (64000/66240)
+2023-11-02 21:33:04,088 INFO     Evaluating the model... (65000/66240)
+2023-11-02 21:33:55,126 INFO     Evaluating the model... (66000/66240)
+2023-11-02 21:34:07,679 INFO     Test MRR at step 499: 0.024789
+2023-11-02 21:34:07,680 INFO     Test MR at step 499: 3179.515137
+2023-11-02 21:34:07,680 INFO     Test HITS@1 at step 499: 0.010445
+2023-11-02 21:34:07,680 INFO     Test HITS@3 at step 499: 0.022576
+2023-11-02 21:34:07,680 INFO     Test HITS@10 at step 499: 0.050151
