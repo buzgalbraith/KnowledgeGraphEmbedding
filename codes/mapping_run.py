@@ -166,6 +166,23 @@ def log_metrics(mode, step, metrics):
 
 ## 
 def main(args):
+    if (not args.do_train) and (not args.do_valid) and (not args.do_test):
+        raise ValueError('one of train/val/test mode must be choosed.')
+    
+    if args.init_checkpoint:
+        override_config(args)
+    elif args.data_path is None:
+        raise ValueError('one of init_checkpoint/data_path must be choosed.')
+
+    if args.do_train and args.save_path is None:
+        raise ValueError('Where do you want to save your trained model?')
+    
+    if args.save_path and not os.path.exists(args.save_path):
+        os.makedirs(args.save_path)
+    
+    # Write logs to checkpoint and console
+    set_logger(args)
+    
     if args.test_datapath is None:
         args.test_datapath = args.data_path
     if args.all_datapath is None:
@@ -178,7 +195,6 @@ def main(args):
     new_entity2id = utils.reset_index(entity2id, possible_entities)
     new_relation2id = utils.reset_index(relation2id, possible_relations)
 
-    ## read in the data
     nentity = len(entity2id)
     nrelation = len(relation2id)
     
@@ -209,7 +225,7 @@ def main(args):
         double_entity_embedding=args.double_entity_embedding,
         double_relation_embedding=args.double_relation_embedding
     )
-    print("model, nentity,{0}".format(kge_model.nentity))
+    # print("model, nentity,{0}".format(kge_model.nentity))
     args.nentity = len(possible_entities)
     args.nrelation = len(possible_relations)
     

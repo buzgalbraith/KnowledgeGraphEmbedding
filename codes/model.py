@@ -343,7 +343,7 @@ class KGEModel(nn.Module):
             metrics = {'auc_pr': auc_pr}
             
         else:
-            print("data loader n entity", args.nentity)
+            # print("data loader n entity", args.nentity)
             #Otherwise use standard (filtered) MRR, MR, HITS@1, HITS@3, and HITS@10 metrics
             #Prepare dataloader for evaluation
             test_dataloader_head = DataLoader(
@@ -425,6 +425,6 @@ class KGEModel(nn.Module):
             metrics = {}
             for metric in logs[0].keys():
                 metrics[metric] = sum([log[metric] for log in logs])/len(logs)
-                print("metric", metric, metrics[metric])
+                # print("metric", metric, metrics[metric])
 
         return metrics

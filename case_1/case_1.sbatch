@@ -29,6 +29,7 @@ LEARNING_RATE=0.0001
 MAX_STEPS=75000
 TEST_BATCH_SIZE=16
 file_name=case_1
+triplet_type=all
 
 
 

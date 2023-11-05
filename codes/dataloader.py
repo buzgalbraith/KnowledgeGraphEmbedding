@@ -41,7 +41,7 @@ class TrainDataset(Dataset):
             with open(path) as fin:
                 for line in fin:
                     entity_type , entity = line.strip().split('\t')
-                    entity_id = self.entity2id[entity.strip()]
+                    entity_id = self.entity2id[entity]
                     entity_type_hash[int(entity_id)] = entity_type
             return entity_type_hash
     
@@ -61,7 +61,7 @@ class TrainDataset(Dataset):
             ## make a dictionary
             possible_entities = []
             for entity in entities['entities'].values:
-                possible_entities.append(int(self.entity2id[entity.strip()]))    
+                possible_entities.append(int(self.entity2id[entity]))    
             possible_entity_hash[triplet_type] = np.array(possible_entities) 
         return possible_entity_hash
     def __len__(self):
