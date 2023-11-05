@@ -1,47 +1,80 @@
-#!/bin/bash
-#SBATCH --job-name=case_3
-#SBATCH --output=./case_3/mapping_run.out
-#SBATCH --nodes=1
-#SBATCH --cpus-per-task=10
-#SBATCH --time=15:00:00
-#SBATCH --mem=10GB
-#SBATCH --gres=gpu:1
+#!/bin/sh
+
+python -u -c 'import torch; print(torch.__version__)'
+
+CODE_PATH=codes
+DATA_PATH=data
+SAVE_PATH=models
+
+#The first four parameters must be provided
+MODE=$1
+MODEL=$2
+save_DATASET=$3
+test_dataset=$4
+GPU_DEVICE=$5
+SAVE_ID=$6
+## if the test_dataset is all, then we use the save_DATASET as the test_dataset
+if [ $test_dataset == "all" ]
+then
+    test_dataset=$save_DATASET
+fi
 
 
-module purge ## purge modules that we are not using
-module load python/intel/3.8.6 ## load python module
-echo "Job start at: $(date)" # print the date and time the job finished
+TEST_DATA_PATH=$DATA_PATH/$test_dataset
+OVERALL_DATA_PATH=$DATA_PATH/$save_DATASET
+SAVE=$SAVE_PATH/"$MODEL"_"$save_DATASET"_"$SAVE_ID"
 
-## set vars 
-MODE=test ## this is only really for testing models using non-unfirom negative sampleing.
-MODEL=RotatE
-overall_dataset=MSK
-GPU_DEVICE=0
-SAVE_ID=uniform
-negative_sample_type_train=uniform
-negative_sample_type_test=dict
-BATCH_SIZE=1024
-NEGATIVE_SAMPLE_SIZE=256
-HIDDEN_DIM=1000
-GAMMA=24.0
-ALPHA=1.0
-LEARNING_RATE=0.0001
-MAX_STEPS=75000
-TEST_BATCH_SIZE=16
-file_name=case_4
+#Only used in training
+BATCH_SIZE=$7
+NEGATIVE_SAMPLE_SIZE=$8
+HIDDEN_DIM=$9
+GAMMA=${10}
+ALPHA=${11}
+LEARNING_RATE=${12}
+MAX_STEPS=${13}
+TEST_BATCH_SIZE=${14}
+TRIPLET_TYPE=${15}
+negative_sample_type_train=${16}
+negative_sample_type_test=${17}
+
+if [ $MODE == "train" ]
+then
+
+echo "Start Training......"
 
 
+CUDA_VISIBLE_DEVICES=$GPU_DEVICE python -u $CODE_PATH/mapping_run.py --do_train \
+    --cuda \
+    --do_valid \
+    --do_test \
+    --data_path $TEST_DATA_PATH \
+    --all_datapath $OVERALL_DATA_PATH \
+    --model $MODEL \
+    -n $NEGATIVE_SAMPLE_SIZE -b $BATCH_SIZE -d $HIDDEN_DIM \
+    -g $GAMMA -a $ALPHA -adv \
+    -lr $LEARNING_RATE --max_steps $MAX_STEPS \
+    -save $SAVE --test_batch_size $TEST_BATCH_SIZE \
+    --triplet_type $TRIPLET_TYPE \
+    --negative_sample_type_train $negative_sample_type_train \
+    --test_datapath $TEST_DATA_PATH \
+    ${18} ${19} ${20} ${21} ${22} ${23} ${24}
 
-# triplet_types=(cancer_to_drug cancer_to_gene cancer_to_treatment gene_to_up_regulate_to_cancer)
-triplet_types=(cancer_to_drug cancer_to_treatment gene_to_up_regulate_to_cancer)
-for triplet_type in "${triplet_types[@]}"
-do
-    echo "----------------------"
-    echo  "triplet type :  ${triplet_type}" ## prints the task id and the corresponding triplet type
-    echo "----------------------"
-    bash ./$file_name/$file_name.sh $MODE $MODEL $overall_dataset $triplet_type $GPU_DEVICE $SAVE_ID \
-    $BATCH_SIZE $NEGATIVE_SAMPLE_SIZE $HIDDEN_DIM $GAMMA $ALPHA $LEARNING_RATE $MAX_STEPS $TEST_BATCH_SIZE $triplet_type \
-    $negative_sample_type_train $negative_sample_type_test \
-    -de ## run task on the corresponding dataset
-    echo "----------------------"
-done
+
+elif [ $MODE == "valid" ]
+then
+
+echo "Start Evaluation on Valid Data Set......"
+
+CUDA_VISIBLE_DEVICES=$GPU_DEVICE python -u $CODE_PATH/mapping_run.py --do_valid --cuda -init $SAVE --triplet_type $TRIPLET_TYPE --all_datapath $OVERALL_DATA_PATH --negative_sample_type_test $negative_sample_type_test --test_datapath $TEST_DATA_PATH --hidden_dim $HIDDEN_DIM -de
+    
+elif [ $MODE == "test" ]
+then
+
+echo "Start Evaluation on Test Data Set......"
+
+CUDA_VISIBLE_DEVICES=$GPU_DEVICE CUDA_LAUNCH_BLOCKING=1 python -u $CODE_PATH/mapping_run.py --do_test --cuda -init $SAVE --data_path $TEST_DATA_PATH --triplet_type $TRIPLET_TYPE --all_datapath $OVERALL_DATA_PATH --negative_sample_type_test $negative_sample_type_test --test_datapath $TEST_DATA_PATH --hidden_dim $HIDDEN_DIM \
+--model $MODEL -de
+
+else
+   echo "Unknown MODE" $MODE
+fi

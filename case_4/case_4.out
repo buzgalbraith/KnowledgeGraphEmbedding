@@ -1,0 +1,199 @@
+Job start at: Sun Nov  5 12:00:10 EST 2023
+----------------------
+triplet type :  cancer_to_drug
+----------------------
+1.12.0+cu102
+Start Evaluation on Test Data Set......
+2023-11-05 12:00:28,279 INFO     Model: RotatE
+2023-11-05 12:00:28,280 INFO     Data Path: data/cancer_to_drug
+2023-11-05 12:00:28,280 INFO     #entity: 22873
+2023-11-05 12:00:28,280 INFO     #relation: 151
+2023-11-05 12:00:28,292 INFO     #train: 680
+2023-11-05 12:00:28,322 INFO     #valid: 90
+2023-11-05 12:00:28,347 INFO     #test: 137
+2023-11-05 12:00:28,591 INFO     Model Parameter Configuration:
+2023-11-05 12:00:28,592 INFO     Parameter gamma: torch.Size([1]), require_grad = False
+2023-11-05 12:00:28,592 INFO     Parameter embedding_range: torch.Size([1]), require_grad = False
+2023-11-05 12:00:28,592 INFO     Parameter entity_embedding: torch.Size([22873, 2000]), require_grad = True
+2023-11-05 12:00:28,592 INFO     Parameter relation_embedding: torch.Size([151, 1000]), require_grad = True
+2023-11-05 12:00:42,338 INFO     Loading checkpoint models/RotatE_MSK_dict...
+2023-11-05 12:00:43,056 INFO     Start Training...
+2023-11-05 12:00:43,056 INFO     init_step = 74999
+2023-11-05 12:00:43,056 INFO     batch_size = 1024
+2023-11-05 12:00:43,056 INFO     negative_adversarial_sampling = 0
+2023-11-05 12:00:43,056 INFO     hidden_dim = 1000
+2023-11-05 12:00:43,056 INFO     gamma = 12.000000
+2023-11-05 12:00:43,056 INFO     negative_adversarial_sampling = False
+2023-11-05 12:00:43,056 INFO     Evaluating on Test Dataset...
+2023-11-05 12:00:43,607 INFO     Evaluating the model... (0/18)
+2023-11-05 12:00:44,165 INFO     Test MRR at step 74999: 0.732576
+2023-11-05 12:00:44,166 INFO     Test MR at step 74999: 19.941606
+2023-11-05 12:00:44,166 INFO     Test HITS@1 at step 74999: 0.704380
+2023-11-05 12:00:44,166 INFO     Test HITS@3 at step 74999: 0.740876
+2023-11-05 12:00:44,166 INFO     Test HITS@10 at step 74999: 0.788321
+----------------------
+----------------------
+triplet type :  cancer_to_gene
+----------------------
+1.12.0+cu102
+Start Evaluation on Test Data Set......
+2023-11-05 12:00:46,860 INFO     Model: RotatE
+2023-11-05 12:00:46,861 INFO     Data Path: data/cancer_to_gene
+2023-11-05 12:00:46,861 INFO     #entity: 22873
+2023-11-05 12:00:46,861 INFO     #relation: 151
+2023-11-05 12:00:49,417 INFO     #train: 2647668
+2023-11-05 12:00:49,813 INFO     #valid: 353022
+2023-11-05 12:00:50,378 INFO     #test: 529534
+2023-11-05 12:00:50,744 INFO     Model Parameter Configuration:
+2023-11-05 12:00:50,745 INFO     Parameter gamma: torch.Size([1]), require_grad = False
+2023-11-05 12:00:50,745 INFO     Parameter embedding_range: torch.Size([1]), require_grad = False
+2023-11-05 12:00:50,745 INFO     Parameter entity_embedding: torch.Size([22873, 2000]), require_grad = True
+2023-11-05 12:00:50,745 INFO     Parameter relation_embedding: torch.Size([151, 1000]), require_grad = True
+2023-11-05 12:00:53,562 INFO     Loading checkpoint models/RotatE_MSK_dict...
+2023-11-05 12:01:01,456 INFO     Start Training...
+2023-11-05 12:01:01,456 INFO     init_step = 74999
+2023-11-05 12:01:01,456 INFO     batch_size = 1024
+2023-11-05 12:01:01,456 INFO     negative_adversarial_sampling = 0
+2023-11-05 12:01:01,456 INFO     hidden_dim = 1000
+2023-11-05 12:01:01,456 INFO     gamma = 12.000000
+2023-11-05 12:01:01,456 INFO     negative_adversarial_sampling = False
+2023-11-05 12:01:01,456 INFO     Evaluating on Test Dataset...
+2023-11-05 12:01:03,667 INFO     Evaluating the model... (0/66192)
+2023-11-05 12:02:18,730 INFO     Evaluating the model... (1000/66192)
+2023-11-05 12:03:33,744 INFO     Evaluating the model... (2000/66192)
+2023-11-05 12:04:48,942 INFO     Evaluating the model... (3000/66192)
+2023-11-05 12:06:03,940 INFO     Evaluating the model... (4000/66192)
+2023-11-05 12:07:19,284 INFO     Evaluating the model... (5000/66192)
+2023-11-05 12:08:34,546 INFO     Evaluating the model... (6000/66192)
+2023-11-05 12:09:50,933 INFO     Evaluating the model... (7000/66192)
+2023-11-05 12:11:06,388 INFO     Evaluating the model... (8000/66192)
+2023-11-05 12:12:22,277 INFO     Evaluating the model... (9000/66192)
+2023-11-05 12:13:37,687 INFO     Evaluating the model... (10000/66192)
+2023-11-05 12:14:53,620 INFO     Evaluating the model... (11000/66192)
+2023-11-05 12:16:08,972 INFO     Evaluating the model... (12000/66192)
+2023-11-05 12:17:25,005 INFO     Evaluating the model... (13000/66192)
+2023-11-05 12:18:40,359 INFO     Evaluating the model... (14000/66192)
+2023-11-05 12:19:56,427 INFO     Evaluating the model... (15000/66192)
+2023-11-05 12:21:12,307 INFO     Evaluating the model... (16000/66192)
+2023-11-05 12:22:28,103 INFO     Evaluating the model... (17000/66192)
+2023-11-05 12:23:43,329 INFO     Evaluating the model... (18000/66192)
+2023-11-05 12:24:59,042 INFO     Evaluating the model... (19000/66192)
+2023-11-05 12:26:14,472 INFO     Evaluating the model... (20000/66192)
+2023-11-05 12:27:29,823 INFO     Evaluating the model... (21000/66192)
+2023-11-05 12:28:45,606 INFO     Evaluating the model... (22000/66192)
+2023-11-05 12:30:00,909 INFO     Evaluating the model... (23000/66192)
+2023-11-05 12:31:17,118 INFO     Evaluating the model... (24000/66192)
+2023-11-05 12:32:32,609 INFO     Evaluating the model... (25000/66192)
+2023-11-05 12:33:48,408 INFO     Evaluating the model... (26000/66192)
+2023-11-05 12:35:03,784 INFO     Evaluating the model... (27000/66192)
+2023-11-05 12:36:19,496 INFO     Evaluating the model... (28000/66192)
+2023-11-05 12:37:34,645 INFO     Evaluating the model... (29000/66192)
+2023-11-05 12:38:50,390 INFO     Evaluating the model... (30000/66192)
+2023-11-05 12:40:05,687 INFO     Evaluating the model... (31000/66192)
+2023-11-05 12:41:21,326 INFO     Evaluating the model... (32000/66192)
+2023-11-05 12:42:36,666 INFO     Evaluating the model... (33000/66192)
+2023-11-05 12:43:51,227 INFO     Evaluating the model... (34000/66192)
+2023-11-05 12:45:04,392 INFO     Evaluating the model... (35000/66192)
+2023-11-05 12:46:17,662 INFO     Evaluating the model... (36000/66192)
+2023-11-05 12:47:31,064 INFO     Evaluating the model... (37000/66192)
+2023-11-05 12:48:45,094 INFO     Evaluating the model... (38000/66192)
+2023-11-05 12:49:58,858 INFO     Evaluating the model... (39000/66192)
+2023-11-05 12:51:12,362 INFO     Evaluating the model... (40000/66192)
+2023-11-05 12:52:26,649 INFO     Evaluating the model... (41000/66192)
+2023-11-05 12:53:40,268 INFO     Evaluating the model... (42000/66192)
+2023-11-05 12:54:54,289 INFO     Evaluating the model... (43000/66192)
+2023-11-05 12:56:07,689 INFO     Evaluating the model... (44000/66192)
+2023-11-05 12:57:21,975 INFO     Evaluating the model... (45000/66192)
+2023-11-05 12:58:35,463 INFO     Evaluating the model... (46000/66192)
+2023-11-05 12:59:49,921 INFO     Evaluating the model... (47000/66192)
+2023-11-05 13:01:03,827 INFO     Evaluating the model... (48000/66192)
+2023-11-05 13:02:18,401 INFO     Evaluating the model... (49000/66192)
+2023-11-05 13:03:32,452 INFO     Evaluating the model... (50000/66192)
+2023-11-05 13:04:46,812 INFO     Evaluating the model... (51000/66192)
+2023-11-05 13:06:00,470 INFO     Evaluating the model... (52000/66192)
+2023-11-05 13:07:15,169 INFO     Evaluating the model... (53000/66192)
+2023-11-05 13:08:28,952 INFO     Evaluating the model... (54000/66192)
+2023-11-05 13:09:43,576 INFO     Evaluating the model... (55000/66192)
+2023-11-05 13:10:57,471 INFO     Evaluating the model... (56000/66192)
+2023-11-05 13:12:11,778 INFO     Evaluating the model... (57000/66192)
+2023-11-05 13:13:25,520 INFO     Evaluating the model... (58000/66192)
+2023-11-05 13:14:39,795 INFO     Evaluating the model... (59000/66192)
+2023-11-05 13:15:53,278 INFO     Evaluating the model... (60000/66192)
+2023-11-05 13:17:07,517 INFO     Evaluating the model... (61000/66192)
+2023-11-05 13:18:21,255 INFO     Evaluating the model... (62000/66192)
+2023-11-05 13:19:35,347 INFO     Evaluating the model... (63000/66192)
+2023-11-05 13:20:49,075 INFO     Evaluating the model... (64000/66192)
+2023-11-05 13:22:02,851 INFO     Evaluating the model... (65000/66192)
+2023-11-05 13:23:16,972 INFO     Evaluating the model... (66000/66192)
+2023-11-05 13:23:31,740 INFO     Test MRR at step 74999: 0.786117
+2023-11-05 13:23:31,740 INFO     Test MR at step 74999: 502.828241
+2023-11-05 13:23:31,740 INFO     Test HITS@1 at step 74999: 0.753599
+2023-11-05 13:23:31,740 INFO     Test HITS@3 at step 74999: 0.799056
+2023-11-05 13:23:31,740 INFO     Test HITS@10 at step 74999: 0.856591
+----------------------
+----------------------
+triplet type :  cancer_to_treatment
+----------------------
+1.12.0+cu102
+Start Evaluation on Test Data Set......
+2023-11-05 13:23:35,429 INFO     Model: RotatE
+2023-11-05 13:23:35,430 INFO     Data Path: data/cancer_to_treatment
+2023-11-05 13:23:35,430 INFO     #entity: 22873
+2023-11-05 13:23:35,431 INFO     #relation: 151
+2023-11-05 13:23:35,502 INFO     #train: 123
+2023-11-05 13:23:35,503 INFO     #valid: 16
+2023-11-05 13:23:35,504 INFO     #test: 25
+2023-11-05 13:23:35,759 INFO     Model Parameter Configuration:
+2023-11-05 13:23:35,759 INFO     Parameter gamma: torch.Size([1]), require_grad = False
+2023-11-05 13:23:35,759 INFO     Parameter embedding_range: torch.Size([1]), require_grad = False
+2023-11-05 13:23:35,759 INFO     Parameter entity_embedding: torch.Size([22873, 2000]), require_grad = True
+2023-11-05 13:23:35,759 INFO     Parameter relation_embedding: torch.Size([151, 1000]), require_grad = True
+2023-11-05 13:23:38,592 INFO     Loading checkpoint models/RotatE_MSK_dict...
+2023-11-05 13:23:39,162 INFO     Start Training...
+2023-11-05 13:23:39,162 INFO     init_step = 74999
+2023-11-05 13:23:39,162 INFO     batch_size = 1024
+2023-11-05 13:23:39,162 INFO     negative_adversarial_sampling = 0
+2023-11-05 13:23:39,162 INFO     hidden_dim = 1000
+2023-11-05 13:23:39,162 INFO     gamma = 12.000000
+2023-11-05 13:23:39,162 INFO     negative_adversarial_sampling = False
+2023-11-05 13:23:39,162 INFO     Evaluating on Test Dataset...
+2023-11-05 13:23:39,619 INFO     Evaluating the model... (0/4)
+2023-11-05 13:23:40,152 INFO     Test MRR at step 74999: 1.000000
+2023-11-05 13:23:40,152 INFO     Test MR at step 74999: 1.000000
+2023-11-05 13:23:40,152 INFO     Test HITS@1 at step 74999: 1.000000
+2023-11-05 13:23:40,152 INFO     Test HITS@3 at step 74999: 1.000000
+2023-11-05 13:23:40,152 INFO     Test HITS@10 at step 74999: 1.000000
+----------------------
+----------------------
+triplet type :  gene_to_up_regulate_to_cancer
+----------------------
+1.12.0+cu102
+Start Evaluation on Test Data Set......
+2023-11-05 13:23:42,669 INFO     Model: RotatE
+2023-11-05 13:23:42,669 INFO     Data Path: data/gene_to_up_regulate_to_cancer
+2023-11-05 13:23:42,669 INFO     #entity: 22873
+2023-11-05 13:23:42,670 INFO     #relation: 151
+2023-11-05 13:23:42,682 INFO     #train: 1104
+2023-11-05 13:23:42,711 INFO     #valid: 148
+2023-11-05 13:23:42,721 INFO     #test: 221
+2023-11-05 13:23:42,965 INFO     Model Parameter Configuration:
+2023-11-05 13:23:42,965 INFO     Parameter gamma: torch.Size([1]), require_grad = False
+2023-11-05 13:23:42,965 INFO     Parameter embedding_range: torch.Size([1]), require_grad = False
+2023-11-05 13:23:42,965 INFO     Parameter entity_embedding: torch.Size([22873, 2000]), require_grad = True
+2023-11-05 13:23:42,965 INFO     Parameter relation_embedding: torch.Size([151, 1000]), require_grad = True
+2023-11-05 13:23:45,819 INFO     Loading checkpoint models/RotatE_MSK_dict...
+2023-11-05 13:23:46,306 INFO     Start Training...
+2023-11-05 13:23:46,306 INFO     init_step = 74999
+2023-11-05 13:23:46,306 INFO     batch_size = 1024
+2023-11-05 13:23:46,306 INFO     negative_adversarial_sampling = 0
+2023-11-05 13:23:46,306 INFO     hidden_dim = 1000
+2023-11-05 13:23:46,306 INFO     gamma = 12.000000
+2023-11-05 13:23:46,306 INFO     negative_adversarial_sampling = False
+2023-11-05 13:23:46,306 INFO     Evaluating on Test Dataset...
+2023-11-05 13:23:46,756 INFO     Evaluating the model... (0/28)
+2023-11-05 13:23:47,739 INFO     Test MRR at step 74999: 0.859841
+2023-11-05 13:23:47,739 INFO     Test MR at step 74999: 37.506787
+2023-11-05 13:23:47,739 INFO     Test HITS@1 at step 74999: 0.848416
+2023-11-05 13:23:47,739 INFO     Test HITS@3 at step 74999: 0.861991
+2023-11-05 13:23:47,739 INFO     Test HITS@10 at step 74999: 0.889140
+----------------------
