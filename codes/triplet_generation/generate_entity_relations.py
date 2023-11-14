@@ -89,7 +89,24 @@ def entity_to_triplet_type(triplets_to_consider: list)->None:
     df = pd.DataFrame([overall_dict.values(), overall_dict.keys()]).T
     df.fillna(' NA', inplace=True)
     df.to_csv(GENERATED_DATA_PATH + "/entity_to_triplet_type.txt", sep='\t', index=False, header=False)
+def relations_to_triplet_type(triplets_to_consider: list)->None:
+    """Generates a text file mapping each relation to its triplet type then writes it to a text file 
 
+    Args: 
+        triplets_to_consider (list): list of triplet types to consider
+    Returns: 
+        None
+    """
+    overall_dict = {}
+    for triplet_type in triplets_to_consider:
+        with open(GENERATED_DATA_PATH + triplet_type + "/relations.dict", 'r') as f:
+            i = 0
+            for line in f:
+                temp = line.strip().split('\t')
+                overall_dict[temp[1]] = triplet_type
+    df = pd.DataFrame([overall_dict.values(), overall_dict.keys()]).T
+    df.fillna(' NA', inplace=True)
+    df.to_csv(GENERATED_DATA_PATH + "/relation_to_triplet_type.txt", sep='\t', index=False, header=False)
 
 if __name__ == "__main__":
     # ## read in the triplets 
