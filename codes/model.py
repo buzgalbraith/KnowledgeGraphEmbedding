@@ -12,11 +12,12 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from sklearn.metrics import average_precision_score
+from sklearn.metrics import average_precision_score, roc_auc_score
 
 from torch.utils.data import DataLoader
 
 from dataloader import TestDataset
+import utils
 
 class KGEModel(nn.Module):
     def __init__(self, model_name, nentity, nrelation, hidden_dim, gamma, 
@@ -415,6 +416,7 @@ class KGEModel(nn.Module):
                                 'HITS@1': 1.0 if ranking <= 1 else 0.0,
                                 'HITS@3': 1.0 if ranking <= 3 else 0.0,
                                 'HITS@10': 1.0 if ranking <= 10 else 0.0,
+                                'AUCROC': utils.auc_roc(argsort[i,:], positive_arg[i], model, multiclass=True)
                             })
 
                         if step % args.test_log_steps == 0:

@@ -1,5 +1,27 @@
 import numpy as np
 from typing import List, Tuple, Dict
+from sklearn.metrics import roc_auc_score
+
+def auc_roc(argsort:np.array, positive_arg:np.array, model, multiclass:bool, **args) -> float:
+    """This will calculate the auc_roc score for the model.
+    Here we are only taking the top prediction of the model. 
+    Args:
+        argsort (np.array): array of the predictions of the model
+        positive_arg (np.array): array of the true labels
+        model (KGEModel): the model we are using
+        multiclass (bool): whether or not the model is multiclass
+        **args: any other arguments we want to pass to the function
+    Returns:
+        auc (float): the auc_roc score for the model
+    """
+    y_hat = argsort[0] ## we are just taking the top prediction 
+    y = positive_arg ## declare as a new variable for readability
+    if multiclass: ## if this is the case we need to make this one hot 
+        y_hat = np.eye(model.nentity)[y_hat] 
+        y = np.eye(model.nentity)[y]
+    auc = roc_auc_score(y, y_hat, **args) # call the function 
+    return auc 
+    
 
 def get_entity2id(all_datapath: str= "./data/MSK") -> dict:
     """returns a dict mapping all entities to their ids (which is used for training the model on all data) 
