@@ -1,0 +1,73 @@
+Job start at: Wed Nov 15 15:11:01 EST 2023
+----------------------
+triplet type :  cancer_to_drug
+----------------------
+1.12.0+cu102
+Start Evaluation on Test Data Set......
+2023-11-15 15:11:18,908 INFO     Model: RotatE
+2023-11-15 15:11:18,909 INFO     Data Path: data/cancer_to_drug
+2023-11-15 15:11:18,909 INFO     #entity: 22873
+2023-11-15 15:11:18,909 INFO     #relation: 151
+2023-11-15 15:11:18,921 INFO     #train: 680
+2023-11-15 15:11:18,930 INFO     #valid: 90
+2023-11-15 15:11:18,957 INFO     #test: 137
+2023-11-15 15:11:19,212 INFO     Model Parameter Configuration:
+2023-11-15 15:11:19,212 INFO     Parameter gamma: torch.Size([1]), require_grad = False
+2023-11-15 15:11:19,212 INFO     Parameter embedding_range: torch.Size([1]), require_grad = False
+2023-11-15 15:11:19,212 INFO     Parameter entity_embedding: torch.Size([22873, 2000]), require_grad = True
+2023-11-15 15:11:19,212 INFO     Parameter relation_embedding: torch.Size([151, 1000]), require_grad = True
+2023-11-15 15:11:32,115 INFO     Loading checkpoint models/RotatE_MSK_uniform...
+2023-11-15 15:11:32,997 INFO     Start Training...
+2023-11-15 15:11:32,997 INFO     init_step = 74999
+2023-11-15 15:11:32,997 INFO     batch_size = 1024
+2023-11-15 15:11:32,998 INFO     negative_adversarial_sampling = 0
+2023-11-15 15:11:32,998 INFO     hidden_dim = 1000
+2023-11-15 15:11:32,998 INFO     gamma = 12.000000
+2023-11-15 15:11:32,998 INFO     negative_adversarial_sampling = False
+2023-11-15 15:11:32,998 INFO     Evaluating on Test Dataset...
+2023-11-15 15:11:33,418 INFO     Evaluating the model... (0/18)
+Traceback (most recent call last):
+  File "codes/run_code/run.py", line 372, in <module>
+    main(parse_args())
+  File "codes/run_code/run.py", line 362, in main
+    metrics = kge_model.test_step(kge_model, test_triples, all_true_triples, args)
+  File "/scratch/wbg231/KnowledgeGraphEmbedding/codes/run_code/model.py", line 430, in test_step
+    metrics["AUCROC"] = utils.auc_roc_batch(argsort, positive_arg, model, multiclass=True)
+  File "/scratch/wbg231/KnowledgeGraphEmbedding/codes/run_code/utils.py", line 44, in auc_roc_batch
+    auc = roc_auc_score(y, y_hat, **args)
+  File "/home/wbg231/.local/lib/python3.8/site-packages/sklearn/metrics/_ranking.py", line 580, in roc_auc_score
+    return _average_binary_score(
+  File "/home/wbg231/.local/lib/python3.8/site-packages/sklearn/metrics/_base.py", line 118, in _average_binary_score
+    score[c] = binary_metric(y_true_c, y_score_c, sample_weight=score_weight)
+  File "/home/wbg231/.local/lib/python3.8/site-packages/sklearn/metrics/_ranking.py", line 339, in _binary_roc_auc_score
+    raise ValueError(
+ValueError: Only one class present in y_true. ROC AUC score is not defined in that case.
+----------------------
+----------------------
+triplet type :  cancer_to_gene
+----------------------
+1.12.0+cu102
+Start Evaluation on Test Data Set......
+2023-11-15 15:11:36,571 INFO     Model: RotatE
+2023-11-15 15:11:36,571 INFO     Data Path: data/cancer_to_gene
+2023-11-15 15:11:36,571 INFO     #entity: 22873
+2023-11-15 15:11:36,571 INFO     #relation: 151
+2023-11-15 15:11:39,178 INFO     #train: 2647668
+2023-11-15 15:11:39,572 INFO     #valid: 353022
+2023-11-15 15:11:40,145 INFO     #test: 529534
+2023-11-15 15:11:40,506 INFO     Model Parameter Configuration:
+2023-11-15 15:11:40,506 INFO     Parameter gamma: torch.Size([1]), require_grad = False
+2023-11-15 15:11:40,506 INFO     Parameter embedding_range: torch.Size([1]), require_grad = False
+2023-11-15 15:11:40,506 INFO     Parameter entity_embedding: torch.Size([22873, 2000]), require_grad = True
+2023-11-15 15:11:40,507 INFO     Parameter relation_embedding: torch.Size([151, 1000]), require_grad = True
+2023-11-15 15:11:43,243 INFO     Loading checkpoint models/RotatE_MSK_uniform...
+2023-11-15 15:11:50,889 INFO     Start Training...
+2023-11-15 15:11:50,889 INFO     init_step = 74999
+2023-11-15 15:11:50,893 INFO     batch_size = 1024
+2023-11-15 15:11:50,893 INFO     negative_adversarial_sampling = 0
+2023-11-15 15:11:50,893 INFO     hidden_dim = 1000
+2023-11-15 15:11:50,893 INFO     gamma = 12.000000
+2023-11-15 15:11:50,893 INFO     negative_adversarial_sampling = False
+2023-11-15 15:11:50,893 INFO     Evaluating on Test Dataset...
+2023-11-15 15:11:52,979 INFO     Evaluating the model... (0/66192)
+2023-11-15 15:13:07,980 INFO     Evaluating the model... (1000/66192)

@@ -1,0 +1,243 @@
+Job start at: Tue Nov 14 18:30:27 EST 2023
+----------------------
+triplet type :  cancer_to_drug
+----------------------
+1.12.0+cu102
+Start Evaluation on Test Data Set......
+2023-11-14 18:30:40,272 INFO     Model: RotatE
+2023-11-14 18:30:40,272 INFO     Data Path: data/cancer_to_drug
+2023-11-14 18:30:40,272 INFO     #entity: 22873
+2023-11-14 18:30:40,272 INFO     #relation: 151
+2023-11-14 18:30:40,274 INFO     #train: 680
+2023-11-14 18:30:40,291 INFO     #valid: 90
+2023-11-14 18:30:40,297 INFO     #test: 137
+2023-11-14 18:30:40,556 INFO     Model Parameter Configuration:
+2023-11-14 18:30:40,557 INFO     Parameter gamma: torch.Size([1]), require_grad = False
+2023-11-14 18:30:40,557 INFO     Parameter embedding_range: torch.Size([1]), require_grad = False
+2023-11-14 18:30:40,557 INFO     Parameter entity_embedding: torch.Size([22873, 2000]), require_grad = True
+2023-11-14 18:30:40,557 INFO     Parameter relation_embedding: torch.Size([151, 1000]), require_grad = True
+2023-11-14 18:30:49,234 INFO     Loading checkpoint models/RotatE_MSK_uniform...
+2023-11-14 18:30:49,786 INFO     Start Training...
+2023-11-14 18:30:49,787 INFO     init_step = 74999
+2023-11-14 18:30:49,787 INFO     batch_size = 1024
+2023-11-14 18:30:49,787 INFO     negative_adversarial_sampling = 0
+2023-11-14 18:30:49,787 INFO     hidden_dim = 1000
+2023-11-14 18:30:49,787 INFO     gamma = 12.000000
+2023-11-14 18:30:49,787 INFO     negative_adversarial_sampling = False
+2023-11-14 18:30:49,787 INFO     Evaluating on Test Dataset...
+2023-11-14 18:30:50,275 INFO     Evaluating the model... (0/18)
+Traceback (most recent call last):
+  File "codes/run.py", line 372, in <module>
+    main(parse_args())
+  File "codes/run.py", line 362, in main
+    metrics = kge_model.test_step(kge_model, test_triples, all_true_triples, args)
+  File "/scratch/wbg231/KnowledgeGraphEmbedding/codes/model.py", line 430, in test_step
+    metrics["AUCROC"] = utils.auc_roc_batch(argsort, positive_arg, model, multiclass=True)
+  File "/scratch/wbg231/KnowledgeGraphEmbedding/codes/utils.py", line 44, in auc_roc_batch
+    auc = roc_auc_score(y, y_hat, **args)
+  File "/home/wbg231/.local/lib/python3.8/site-packages/sklearn/metrics/_ranking.py", line 580, in roc_auc_score
+    return _average_binary_score(
+  File "/home/wbg231/.local/lib/python3.8/site-packages/sklearn/metrics/_base.py", line 118, in _average_binary_score
+    score[c] = binary_metric(y_true_c, y_score_c, sample_weight=score_weight)
+  File "/home/wbg231/.local/lib/python3.8/site-packages/sklearn/metrics/_ranking.py", line 339, in _binary_roc_auc_score
+    raise ValueError(
+ValueError: Only one class present in y_true. ROC AUC score is not defined in that case.
+----------------------
+----------------------
+triplet type :  cancer_to_gene
+----------------------
+1.12.0+cu102
+Start Evaluation on Test Data Set......
+2023-11-14 18:30:53,486 INFO     Model: RotatE
+2023-11-14 18:30:53,486 INFO     Data Path: data/cancer_to_gene
+2023-11-14 18:30:53,486 INFO     #entity: 22873
+2023-11-14 18:30:53,486 INFO     #relation: 151
+2023-11-14 18:30:56,059 INFO     #train: 2647668
+2023-11-14 18:30:56,443 INFO     #valid: 353022
+2023-11-14 18:30:56,951 INFO     #test: 529534
+2023-11-14 18:30:57,316 INFO     Model Parameter Configuration:
+2023-11-14 18:30:57,316 INFO     Parameter gamma: torch.Size([1]), require_grad = False
+2023-11-14 18:30:57,316 INFO     Parameter embedding_range: torch.Size([1]), require_grad = False
+2023-11-14 18:30:57,316 INFO     Parameter entity_embedding: torch.Size([22873, 2000]), require_grad = True
+2023-11-14 18:30:57,316 INFO     Parameter relation_embedding: torch.Size([151, 1000]), require_grad = True
+2023-11-14 18:31:00,155 INFO     Loading checkpoint models/RotatE_MSK_uniform...
+2023-11-14 18:31:07,795 INFO     Start Training...
+2023-11-14 18:31:07,795 INFO     init_step = 74999
+2023-11-14 18:31:07,795 INFO     batch_size = 1024
+2023-11-14 18:31:07,799 INFO     negative_adversarial_sampling = 0
+2023-11-14 18:31:07,799 INFO     hidden_dim = 1000
+2023-11-14 18:31:07,799 INFO     gamma = 12.000000
+2023-11-14 18:31:07,799 INFO     negative_adversarial_sampling = False
+2023-11-14 18:31:07,799 INFO     Evaluating on Test Dataset...
+2023-11-14 18:31:09,939 INFO     Evaluating the model... (0/66192)
+2023-11-14 18:32:24,810 INFO     Evaluating the model... (1000/66192)
+2023-11-14 18:33:39,535 INFO     Evaluating the model... (2000/66192)
+2023-11-14 18:34:54,579 INFO     Evaluating the model... (3000/66192)
+2023-11-14 18:36:09,297 INFO     Evaluating the model... (4000/66192)
+2023-11-14 18:37:24,503 INFO     Evaluating the model... (5000/66192)
+2023-11-14 18:38:39,676 INFO     Evaluating the model... (6000/66192)
+2023-11-14 18:39:55,503 INFO     Evaluating the model... (7000/66192)
+2023-11-14 18:41:10,730 INFO     Evaluating the model... (8000/66192)
+2023-11-14 18:42:26,481 INFO     Evaluating the model... (9000/66192)
+2023-11-14 18:43:41,784 INFO     Evaluating the model... (10000/66192)
+2023-11-14 18:44:57,676 INFO     Evaluating the model... (11000/66192)
+2023-11-14 18:46:12,907 INFO     Evaluating the model... (12000/66192)
+2023-11-14 18:47:28,823 INFO     Evaluating the model... (13000/66192)
+2023-11-14 18:48:44,120 INFO     Evaluating the model... (14000/66192)
+2023-11-14 18:49:59,991 INFO     Evaluating the model... (15000/66192)
+2023-11-14 18:51:15,190 INFO     Evaluating the model... (16000/66192)
+2023-11-14 18:52:31,009 INFO     Evaluating the model... (17000/66192)
+2023-11-14 18:53:46,370 INFO     Evaluating the model... (18000/66192)
+2023-11-14 18:55:02,129 INFO     Evaluating the model... (19000/66192)
+2023-11-14 18:56:17,398 INFO     Evaluating the model... (20000/66192)
+2023-11-14 18:57:32,836 INFO     Evaluating the model... (21000/66192)
+2023-11-14 18:58:48,395 INFO     Evaluating the model... (22000/66192)
+2023-11-14 19:00:03,666 INFO     Evaluating the model... (23000/66192)
+2023-11-14 19:01:19,383 INFO     Evaluating the model... (24000/66192)
+2023-11-14 19:02:34,642 INFO     Evaluating the model... (25000/66192)
+2023-11-14 19:03:50,248 INFO     Evaluating the model... (26000/66192)
+2023-11-14 19:05:05,498 INFO     Evaluating the model... (27000/66192)
+2023-11-14 19:06:21,105 INFO     Evaluating the model... (28000/66192)
+2023-11-14 19:07:36,272 INFO     Evaluating the model... (29000/66192)
+2023-11-14 19:08:51,831 INFO     Evaluating the model... (30000/66192)
+2023-11-14 19:10:07,072 INFO     Evaluating the model... (31000/66192)
+2023-11-14 19:11:22,633 INFO     Evaluating the model... (32000/66192)
+2023-11-14 19:12:37,861 INFO     Evaluating the model... (33000/66192)
+2023-11-14 19:13:52,257 INFO     Evaluating the model... (34000/66192)
+2023-11-14 19:15:05,276 INFO     Evaluating the model... (35000/66192)
+2023-11-14 19:16:18,295 INFO     Evaluating the model... (36000/66192)
+2023-11-14 19:17:31,715 INFO     Evaluating the model... (37000/66192)
+2023-11-14 19:18:44,756 INFO     Evaluating the model... (38000/66192)
+2023-11-14 19:19:58,340 INFO     Evaluating the model... (39000/66192)
+2023-11-14 19:21:11,707 INFO     Evaluating the model... (40000/66192)
+2023-11-14 19:22:25,535 INFO     Evaluating the model... (41000/66192)
+2023-11-14 19:23:39,130 INFO     Evaluating the model... (42000/66192)
+2023-11-14 19:24:53,201 INFO     Evaluating the model... (43000/66192)
+2023-11-14 19:26:06,798 INFO     Evaluating the model... (44000/66192)
+2023-11-14 19:27:20,938 INFO     Evaluating the model... (45000/66192)
+2023-11-14 19:28:34,549 INFO     Evaluating the model... (46000/66192)
+2023-11-14 19:29:49,056 INFO     Evaluating the model... (47000/66192)
+2023-11-14 19:31:02,599 INFO     Evaluating the model... (48000/66192)
+2023-11-14 19:32:16,732 INFO     Evaluating the model... (49000/66192)
+2023-11-14 19:33:30,321 INFO     Evaluating the model... (50000/66192)
+2023-11-14 19:34:44,443 INFO     Evaluating the model... (51000/66192)
+2023-11-14 19:35:57,887 INFO     Evaluating the model... (52000/66192)
+2023-11-14 19:37:12,093 INFO     Evaluating the model... (53000/66192)
+2023-11-14 19:38:25,628 INFO     Evaluating the model... (54000/66192)
+2023-11-14 19:39:39,717 INFO     Evaluating the model... (55000/66192)
+2023-11-14 19:40:53,355 INFO     Evaluating the model... (56000/66192)
+2023-11-14 19:42:07,784 INFO     Evaluating the model... (57000/66192)
+2023-11-14 19:43:21,246 INFO     Evaluating the model... (58000/66192)
+2023-11-14 19:44:35,529 INFO     Evaluating the model... (59000/66192)
+2023-11-14 19:45:49,153 INFO     Evaluating the model... (60000/66192)
+2023-11-14 19:47:03,210 INFO     Evaluating the model... (61000/66192)
+2023-11-14 19:48:16,742 INFO     Evaluating the model... (62000/66192)
+2023-11-14 19:49:31,058 INFO     Evaluating the model... (63000/66192)
+2023-11-14 19:50:44,752 INFO     Evaluating the model... (64000/66192)
+2023-11-14 19:51:58,524 INFO     Evaluating the model... (65000/66192)
+2023-11-14 19:53:12,636 INFO     Evaluating the model... (66000/66192)
+Traceback (most recent call last):
+  File "codes/run.py", line 372, in <module>
+    main(parse_args())
+  File "codes/run.py", line 362, in main
+    metrics = kge_model.test_step(kge_model, test_triples, all_true_triples, args)
+  File "/scratch/wbg231/KnowledgeGraphEmbedding/codes/model.py", line 430, in test_step
+    metrics["AUCROC"] = utils.auc_roc_batch(argsort, positive_arg, model, multiclass=True)
+  File "/scratch/wbg231/KnowledgeGraphEmbedding/codes/utils.py", line 44, in auc_roc_batch
+    auc = roc_auc_score(y, y_hat, **args)
+  File "/home/wbg231/.local/lib/python3.8/site-packages/sklearn/metrics/_ranking.py", line 580, in roc_auc_score
+    return _average_binary_score(
+  File "/home/wbg231/.local/lib/python3.8/site-packages/sklearn/metrics/_base.py", line 118, in _average_binary_score
+    score[c] = binary_metric(y_true_c, y_score_c, sample_weight=score_weight)
+  File "/home/wbg231/.local/lib/python3.8/site-packages/sklearn/metrics/_ranking.py", line 339, in _binary_roc_auc_score
+    raise ValueError(
+ValueError: Only one class present in y_true. ROC AUC score is not defined in that case.
+----------------------
+----------------------
+triplet type :  cancer_to_treatment
+----------------------
+1.12.0+cu102
+Start Evaluation on Test Data Set......
+2023-11-14 19:53:32,716 INFO     Model: RotatE
+2023-11-14 19:53:32,717 INFO     Data Path: data/cancer_to_treatment
+2023-11-14 19:53:32,717 INFO     #entity: 22873
+2023-11-14 19:53:32,717 INFO     #relation: 151
+2023-11-14 19:53:32,742 INFO     #train: 123
+2023-11-14 19:53:32,743 INFO     #valid: 16
+2023-11-14 19:53:32,743 INFO     #test: 25
+2023-11-14 19:53:32,986 INFO     Model Parameter Configuration:
+2023-11-14 19:53:32,986 INFO     Parameter gamma: torch.Size([1]), require_grad = False
+2023-11-14 19:53:32,986 INFO     Parameter embedding_range: torch.Size([1]), require_grad = False
+2023-11-14 19:53:32,986 INFO     Parameter entity_embedding: torch.Size([22873, 2000]), require_grad = True
+2023-11-14 19:53:32,986 INFO     Parameter relation_embedding: torch.Size([151, 1000]), require_grad = True
+2023-11-14 19:53:35,902 INFO     Loading checkpoint models/RotatE_MSK_uniform...
+2023-11-14 19:53:36,514 INFO     Start Training...
+2023-11-14 19:53:36,514 INFO     init_step = 74999
+2023-11-14 19:53:36,514 INFO     batch_size = 1024
+2023-11-14 19:53:36,514 INFO     negative_adversarial_sampling = 0
+2023-11-14 19:53:36,514 INFO     hidden_dim = 1000
+2023-11-14 19:53:36,514 INFO     gamma = 12.000000
+2023-11-14 19:53:36,514 INFO     negative_adversarial_sampling = False
+2023-11-14 19:53:36,514 INFO     Evaluating on Test Dataset...
+2023-11-14 19:53:36,891 INFO     Evaluating the model... (0/4)
+Traceback (most recent call last):
+  File "codes/run.py", line 372, in <module>
+    main(parse_args())
+  File "codes/run.py", line 362, in main
+    metrics = kge_model.test_step(kge_model, test_triples, all_true_triples, args)
+  File "/scratch/wbg231/KnowledgeGraphEmbedding/codes/model.py", line 430, in test_step
+    metrics["AUCROC"] = utils.auc_roc_batch(argsort, positive_arg, model, multiclass=True)
+  File "/scratch/wbg231/KnowledgeGraphEmbedding/codes/utils.py", line 44, in auc_roc_batch
+    auc = roc_auc_score(y, y_hat, **args)
+  File "/home/wbg231/.local/lib/python3.8/site-packages/sklearn/metrics/_ranking.py", line 580, in roc_auc_score
+    return _average_binary_score(
+  File "/home/wbg231/.local/lib/python3.8/site-packages/sklearn/metrics/_base.py", line 118, in _average_binary_score
+    score[c] = binary_metric(y_true_c, y_score_c, sample_weight=score_weight)
+  File "/home/wbg231/.local/lib/python3.8/site-packages/sklearn/metrics/_ranking.py", line 339, in _binary_roc_auc_score
+    raise ValueError(
+ValueError: Only one class present in y_true. ROC AUC score is not defined in that case.
+----------------------
+----------------------
+triplet type :  gene_to_up_regulate_to_cancer
+----------------------
+1.12.0+cu102
+Start Evaluation on Test Data Set......
+2023-11-14 19:53:39,971 INFO     Model: RotatE
+2023-11-14 19:53:39,971 INFO     Data Path: data/gene_to_up_regulate_to_cancer
+2023-11-14 19:53:39,971 INFO     #entity: 22873
+2023-11-14 19:53:39,971 INFO     #relation: 151
+2023-11-14 19:53:39,990 INFO     #train: 1104
+2023-11-14 19:53:40,003 INFO     #valid: 148
+2023-11-14 19:53:40,055 INFO     #test: 221
+2023-11-14 19:53:40,298 INFO     Model Parameter Configuration:
+2023-11-14 19:53:40,298 INFO     Parameter gamma: torch.Size([1]), require_grad = False
+2023-11-14 19:53:40,298 INFO     Parameter embedding_range: torch.Size([1]), require_grad = False
+2023-11-14 19:53:40,298 INFO     Parameter entity_embedding: torch.Size([22873, 2000]), require_grad = True
+2023-11-14 19:53:40,298 INFO     Parameter relation_embedding: torch.Size([151, 1000]), require_grad = True
+2023-11-14 19:53:43,379 INFO     Loading checkpoint models/RotatE_MSK_uniform...
+2023-11-14 19:53:43,873 INFO     Start Training...
+2023-11-14 19:53:43,873 INFO     init_step = 74999
+2023-11-14 19:53:43,873 INFO     batch_size = 1024
+2023-11-14 19:53:43,873 INFO     negative_adversarial_sampling = 0
+2023-11-14 19:53:43,873 INFO     hidden_dim = 1000
+2023-11-14 19:53:43,873 INFO     gamma = 12.000000
+2023-11-14 19:53:43,873 INFO     negative_adversarial_sampling = False
+2023-11-14 19:53:43,873 INFO     Evaluating on Test Dataset...
+2023-11-14 19:53:44,353 INFO     Evaluating the model... (0/28)
+Traceback (most recent call last):
+  File "codes/run.py", line 372, in <module>
+    main(parse_args())
+  File "codes/run.py", line 362, in main
+    metrics = kge_model.test_step(kge_model, test_triples, all_true_triples, args)
+  File "/scratch/wbg231/KnowledgeGraphEmbedding/codes/model.py", line 430, in test_step
+    metrics["AUCROC"] = utils.auc_roc_batch(argsort, positive_arg, model, multiclass=True)
+  File "/scratch/wbg231/KnowledgeGraphEmbedding/codes/utils.py", line 44, in auc_roc_batch
+    auc = roc_auc_score(y, y_hat, **args)
+  File "/home/wbg231/.local/lib/python3.8/site-packages/sklearn/metrics/_ranking.py", line 580, in roc_auc_score
+    return _average_binary_score(
+  File "/home/wbg231/.local/lib/python3.8/site-packages/sklearn/metrics/_base.py", line 118, in _average_binary_score
+    score[c] = binary_metric(y_true_c, y_score_c, sample_weight=score_weight)
+  File "/home/wbg231/.local/lib/python3.8/site-packages/sklearn/metrics/_ranking.py", line 339, in _binary_roc_auc_score
+    raise ValueError(
+ValueError: Only one class present in y_true. ROC AUC score is not defined in that case.
+----------------------
