@@ -3,7 +3,6 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-
 import logging
 
 import numpy as np
@@ -155,7 +154,7 @@ class KGEModel(nn.Module):
             'RotatE': self.RotatE,
             'pRotatE': self.pRotatE
         }
-        
+        ## this score is what we want to look at 
         if self.model_name in model_func:
             score = model_func[self.model_name](head, relation, tail, mode)
         else:
@@ -344,7 +343,6 @@ class KGEModel(nn.Module):
             metrics = {'auc_pr': auc_pr}
             
         else:
-            # print("data loader n entity", args.nentity)
             #Otherwise use standard (filtered) MRR, MR, HITS@1, HITS@3, and HITS@10 metrics
             #Prepare dataloader for evaluation
             test_dataloader_head = DataLoader(
@@ -376,7 +374,7 @@ class KGEModel(nn.Module):
             test_dataset_list = [test_dataloader_head, test_dataloader_tail]
             
             logs = []
-
+            auc_log = [] ## giving it it's own log since we only need to calculate this once per batch. 
             step = 0
             total_steps = sum([len(dataset) for dataset in test_dataset_list])
 
@@ -391,11 +389,8 @@ class KGEModel(nn.Module):
                         batch_size = positive_sample.size(0)
 
                         score = model((positive_sample, negative_sample), mode)
-                        score += filter_bias
-
-                        #Explicitly sort all the entities to ensure that there is no test exposure bias
+                        score += filter_bias ## this is our continuous score of shape (batch_size, n_entities)
                         argsort = torch.argsort(score, dim = 1, descending=True)
-
                         if mode == 'head-batch':
                             positive_arg = positive_sample[:, 0]
                         elif mode == 'tail-batch':
@@ -416,9 +411,9 @@ class KGEModel(nn.Module):
                                 'HITS@1': 1.0 if ranking <= 1 else 0.0,
                                 'HITS@3': 1.0 if ranking <= 3 else 0.0,
                                 'HITS@10': 1.0 if ranking <= 10 else 0.0,
-                                # 'AUCROC': utils.auc_roc_single(argsort[i,:], positive_arg[i], model, multiclass=False)
                             })
 
+                        
                         if step % args.test_log_steps == 0:
                             logging.info('Evaluating the model... (%d/%d)' % (step, total_steps))
 
@@ -427,7 +422,4 @@ class KGEModel(nn.Module):
             metrics = {}
             for metric in logs[0].keys():
                 metrics[metric] = sum([log[metric] for log in logs])/len(logs)
-            metrics["AUCROC"] = utils.auc_roc_batch(argsort, positive_arg, model, multiclass=True)
-                # print("metric", metric, metrics[metric])
-
         return metrics

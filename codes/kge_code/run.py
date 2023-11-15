@@ -60,6 +60,7 @@ def parse_args(args=None):
     parser.add_argument('-save', '--save_path', default=None, type=str)
     parser.add_argument('--max_steps', default=100000, type=int)
     parser.add_argument('--warm_up_steps', default=None, type=int)
+
     
     parser.add_argument('--save_checkpoint_steps', default=10000, type=int)
     parser.add_argument('--valid_steps', default=10000, type=int)
@@ -76,6 +77,7 @@ def parse_args(args=None):
     parser.add_argument('--triplet_type', type=str, default='all', help='triplet type to use')
     parser.add_argument('--negative_sample_type_train', type=str, default='uniform', help='negative sample type for training')
     parser.add_argument('--negative_sample_type_test', type=str, default='uniform', help='negative sample type for testing')
+    parser.add_argument('--AUC', type=bool, default=False, help='whether to calculate AUC')
     return parser.parse_args(args)
 def override_config(args):
     '''
@@ -92,7 +94,7 @@ def override_config(args):
     args.double_entity_embedding = argparse_dict['double_entity_embedding']
     args.double_relation_embedding = argparse_dict['double_relation_embedding']
     args.hidden_dim = argparse_dict['hidden_dim']
-    args.test_batch_size = argparse_dict['test_batch_size']
+    # args.cpu_num = 4 only use while debugging.
     
 def save_model(model, optimizer, save_variable_list, args):
     '''
@@ -215,7 +217,7 @@ def main(args):
     logging.info('#test: %d' % len(test_triples))
     
     #All true triples
-    all_true_triples = train_triples + valid_triples + test_triples
+    all_true_triples = train_triples + valid_triples + test_triples ## so we have this al true triplets thing any way. 
     kge_model = KGEModel(
         model_name=args.model,
         nentity=nentity,
@@ -225,7 +227,6 @@ def main(args):
         double_entity_embedding=args.double_entity_embedding,
         double_relation_embedding=args.double_relation_embedding
     )
-    # print("model, nentity,{0}".format(kge_model.nentity))
     args.nentity = len(possible_entities)
     args.nrelation = len(possible_relations)
     
@@ -269,7 +270,10 @@ def main(args):
     if args.init_checkpoint:
         # Restore model from checkpoint directory
         logging.info('Loading checkpoint %s...' % args.init_checkpoint)
-        checkpoint = torch.load(os.path.join(args.init_checkpoint, 'checkpoint'))
+        if args.cuda:
+            checkpoint = torch.load(os.path.join(args.init_checkpoint, 'checkpoint'))
+        else:
+            checkpoint = torch.load(os.path.join(args.init_checkpoint, 'checkpoint'), map_location=torch.device('cpu'))
         init_step = checkpoint['step']
         kge_model.load_state_dict(checkpoint['model_state_dict'])
         ## buz modification -- stratified negative sampling
@@ -356,6 +360,12 @@ def main(args):
         logging.info('Evaluating on Valid Dataset...')
         metrics = kge_model.test_step(kge_model, valid_triples, all_true_triples, args)
         log_metrics('Valid', step, metrics)
+    
+    if args.AUC:
+        logging.info("getting auc")
+        utils.auc_total(all_true_triples, kge_model,logging,  args, multi_class = 'ovo')
+        ## want to exit the script now 
+        exit()
     
     if args.do_test:
         logging.info('Evaluating on Test Dataset...')

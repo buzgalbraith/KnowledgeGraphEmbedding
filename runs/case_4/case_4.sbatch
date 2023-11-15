@@ -29,19 +29,20 @@ LEARNING_RATE=0.0001
 MAX_STEPS=75000
 TEST_BATCH_SIZE=16
 file_name=case_4
-
-
-
-triplet_types=(cancer_to_drug cancer_to_gene cancer_to_treatment gene_to_up_regulate_to_cancer)
+AUC=True
+Device=cpu
+# triplet_types=(cancer_to_drug cancer_to_gene cancer_to_treatment gene_to_up_regulate_to_cancer)
+triplet_types=(cancer_to_treatment cancer_to_drug)
 # triplet_types=(cancer_to_drug cancer_to_treatment gene_to_up_regulate_to_cancer)
+echo ./runs/run_files/${Device}_run.sh
 for triplet_type in "${triplet_types[@]}"
 do
     echo "----------------------"
     echo  "triplet type :  ${triplet_type}" ## prints the task id and the corresponding triplet type
     echo "----------------------"
-    bash ./runs/$file_name/$file_name.sh $MODE $MODEL $overall_dataset $triplet_type $GPU_DEVICE $SAVE_ID \
+    bash ./runs/run_files/${Device}_run.sh $MODE $MODEL $overall_dataset $triplet_type $GPU_DEVICE $SAVE_ID \
     $BATCH_SIZE $NEGATIVE_SAMPLE_SIZE $HIDDEN_DIM $GAMMA $ALPHA $LEARNING_RATE $MAX_STEPS $TEST_BATCH_SIZE $triplet_type \
-    $negative_sample_type_train $negative_sample_type_test \
+    $negative_sample_type_train $negative_sample_type_test $AUC \ 
     -de ## run task on the corresponding dataset
     echo "----------------------"
 done

@@ -2,7 +2,7 @@
 
 python -u -c 'import torch; print(torch.__version__)'
 
-CODE_PATH=codes/run_code
+CODE_PATH=codes/kge_code
 DATA_PATH=data
 SAVE_PATH=models
 
@@ -56,8 +56,8 @@ CUDA_VISIBLE_DEVICES=$GPU_DEVICE python -u $CODE_PATH/run.py --do_train \
     -save $SAVE --test_batch_size $TEST_BATCH_SIZE \
     --triplet_type $TRIPLET_TYPE \
     --negative_sample_type_train $negative_sample_type_train \
-    --test_datapath $TEST_DATA_PATH \
-    ${18} ${19} ${20} ${21} ${22} ${23} ${24}
+    --test_datapath $TEST_DATA_PATH --AUC $AUC \
+    ${19} ${20} ${21} ${22} ${23} ${24} ${25}
 
 
 elif [ $MODE == "valid" ]
@@ -65,7 +65,7 @@ then
 
 echo "Start Evaluation on Valid Data Set......"
 
-CUDA_VISIBLE_DEVICES=$GPU_DEVICE python -u $CODE_PATH/run.py --do_valid --cuda -init $SAVE --triplet_type $TRIPLET_TYPE --all_datapath $OVERALL_DATA_PATH --negative_sample_type_test $negative_sample_type_test --test_datapath $TEST_DATA_PATH --hidden_dim $HIDDEN_DIM -de
+CUDA_VISIBLE_DEVICES=$GPU_DEVICE python -u $CODE_PATH/run.py --do_valid --cuda -init $SAVE --triplet_type $TRIPLET_TYPE --all_datapath $OVERALL_DATA_PATH --negative_sample_type_test $negative_sample_type_test --test_datapath $TEST_DATA_PATH --hidden_dim $HIDDEN_DIM -de --AUC $AUC
     
 elif [ $MODE == "test" ]
 then
@@ -73,7 +73,7 @@ then
 echo "Start Evaluation on Test Data Set......"
 
 CUDA_VISIBLE_DEVICES=$GPU_DEVICE CUDA_LAUNCH_BLOCKING=1 python -u $CODE_PATH/run.py --do_test --cuda -init $SAVE --data_path $TEST_DATA_PATH --triplet_type $TRIPLET_TYPE --all_datapath $OVERALL_DATA_PATH --negative_sample_type_test $negative_sample_type_test --test_datapath $TEST_DATA_PATH --hidden_dim $HIDDEN_DIM \
---model $MODEL -de
+--model $MODEL -de --AUC $AUC
 
 else
    echo "Unknown MODE" $MODE

@@ -1,54 +1,112 @@
 import numpy as np
 from typing import List, Tuple, Dict
 from sklearn.metrics import roc_auc_score
+from torch.utils.data import DataLoader
+from dataloader import TestDataset
+import torch
+from torch.nn.functional import softmax
+def prob_auc(score:torch.Tensor, true_labels:torch.Tensor, **args):
+    """computes ROC_AUC score for a given score and true labels
+    Args:
+        score (torch.Tensor): the score of the model for the given triplets (n_samples, n_entities)
+        true_labels (torch.Tensor): the true labels for the triplets (n_samples, )
+        args: arguments for roc_auc_score
+    REturns:
+        au_roc (float): the ROC_AUC score for the given score and true labels
+    """
+    prob_vector = softmax(score, dim=1) ## soft max over the entities  (to make them probability vectors)
+    au_roc = roc_auc_score(true_labels, prob_vector, **args)  
+    return au_roc
 
-def auc_roc_single(argsort:np.array, positive_arg:np.array, model, multiclass:bool, **args) -> float:
-    """This will calculate the auc_roc score for the model.
-    Here we are only taking the top prediction of the model. 
+def total_dataloader(all_true_triples:list, args)->list:
+    """constructs the dataloader for AUC calculation.
     Args:
-        argsort (np.array): array of the predictions of the model
-        positive_arg (np.array): array of the true labels
-        model (KGEModel): the model we are using
-        multiclass (bool): whether or not the model is multiclass
-        **args: any other arguments we want to pass to the function
+        all_true_triples (list): list of all the true triplets
+        args (Namespace): arguments for the model
     Returns:
-        auc (float): the auc_roc score for the model
+        test_dataset_list (list): list of the dataloaders for the test set
     """
-    y_hat = argsort[0] ## we are just taking the top prediction 
-    y = positive_arg ## declare as a new variable for readability
-    if multiclass: ## if this is the case we need to make this one hot 
-        y_hat = np.eye(model.nentity)[y_hat] 
-        y = np.eye(model.nentity)[y] 
-        auc = roc_auc_score(y, y_hat, **args) # call the function 
-        return auc 
-    else:
-        raise ValueError("use batch auc for binary classification")
-def auc_roc_batch(argsort:np.array, positive_arg:np.array, model, multiclass:bool, **args) -> float:
-    """This will calculate the auc_roc score for the model.
-    Here we are only taking the top prediction of the model. 
-    Args:
-        argsort (np.array): array of the predictions of the model
-        positive_arg (np.array): array of the true labels
-        model (KGEModel): the model we are using
-        multiclass (bool): whether or not the model is multiclass
-        **args: any other arguments we want to pass to the function
-    Returns:
-        auc (float): the auc_roc score for the model
-    """
-    y_hat = argsort[:,0]
-    y = positive_arg
-    if multiclass:## do the multiclass case
-        ## we need to stack the one hot arrays for each row
-        y_hat = np.stack([np.eye(model.nentity)[y_hat[i]] for i in range(len(y_hat))])
-        y = np.stack([np.eye(model.nentity)[y[i]] for i in range(len(y))])
-        auc = roc_auc_score(y, y_hat, **args)
-        return auc
-    else: ## want to make y all ones, and y_hat one if it equals y 
-        y_hat = np.array([1 if y_hat[i] == y[i] else 0 for i in range(len(y))])
-        y = np.ones(len(y))
-        auc = roc_auc_score(y, y_hat, **args)
-        return auc
-    
+    test_dataloader_head = DataLoader(
+                TestDataset(
+                    all_true_triples, 
+                    all_true_triples, 
+                    args.nentity, 
+                    args.nrelation, 
+                    'head-batch'
+                ), 
+                batch_size=args.test_batch_size,
+                num_workers=max(1, args.cpu_num//2), 
+                collate_fn=TestDataset.collate_fn
+            )
+
+    test_dataloader_tail = DataLoader(
+                TestDataset(
+                    all_true_triples, 
+                    all_true_triples, 
+                    args.nentity, 
+                    args.nrelation, 
+                    'tail-batch'
+                ), 
+                batch_size=args.test_batch_size,
+                num_workers=max(1, args.cpu_num//2), 
+                collate_fn=TestDataset.collate_fn
+            )
+    test_dataset_list = [test_dataloader_head, test_dataloader_tail]
+    return test_dataset_list
+
+
+def auc_total(all_true_triples:list, model, logging,run_args, **args)->None:
+        """computes ROC_AUC score over all data (ie training + validation + test). 
+        it is like this since, the roc_auc_score requires all the possible entities to be present in the true label vector which is hard to obtain in this case since some entities are quite rare. 
+        Args: 
+            all_true_triples (list): list of all the true triplets
+            model (KGEModel): the model to evaluate
+            logging (logging): the logger
+            run_args (Namespace): arguments for the model
+            args: arguments for roc_auc_score
+        Returns:
+            None : just logs the score
+        """
+        model.eval()
+        ## construct the test dataloader
+        test_dataset_list = total_dataloader(all_true_triples, run_args)
+        all_scores = None
+        all_true_labels = None
+        step = 0
+        total_steps = sum([len(dataset) for dataset in test_dataset_list])
+        with torch.no_grad():
+                for test_dataset in test_dataset_list:
+                    for positive_sample, negative_sample, filter_bias, mode in test_dataset:
+                        if run_args.cuda:
+                            positive_sample = positive_sample.cuda()
+                            negative_sample = negative_sample.cuda()
+                            filter_bias = filter_bias.cuda()
+
+                        batch_size = positive_sample.size(0)
+
+                        score = model((positive_sample, negative_sample), mode)
+                        score += filter_bias ## this is our continuous score of shape (batch_size, n_entities)
+                        if mode == 'head-batch':
+                            positive_arg = positive_sample[:, 0]
+                        elif mode == 'tail-batch':
+                            positive_arg = positive_sample[:, 2]
+                        
+                        if all_scores is None:
+                            all_scores = score
+                        else:
+                            all_scores = torch.cat((all_scores, score), dim=0)
+                        if all_true_labels is None:
+                            all_true_labels = positive_arg
+                        else:
+                            all_true_labels = torch.cat((all_true_labels, positive_arg), dim=0)
+                        step += 1
+                        logging.info('Evaluating the model... (%d/%d)' % (step, total_steps))
+                        
+        auc = prob_auc(all_scores, all_true_labels, **args)
+        logging.info('-'*100) 
+        logging.info('AUC: %f' % auc)
+        logging.info('-'*100) 
+
 
 def get_entity2id(all_datapath: str= "./data/MSK") -> dict:
     """returns a dict mapping all entities to their ids (which is used for training the model on all data) 
