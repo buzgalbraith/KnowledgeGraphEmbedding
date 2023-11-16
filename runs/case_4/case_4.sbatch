@@ -32,8 +32,7 @@ file_name=case_4
 AUC=True
 Device=cpu
 # triplet_types=(cancer_to_drug cancer_to_gene cancer_to_treatment gene_to_up_regulate_to_cancer)
-triplet_types=(cancer_to_treatment cancer_to_drug)
-# triplet_types=(cancer_to_drug cancer_to_treatment gene_to_up_regulate_to_cancer)
+triplet_types=(cancer_to_drug cancer_to_treatment gene_to_up_regulate_to_cancer)
 echo ./runs/run_files/${Device}_run.sh
 for triplet_type in "${triplet_types[@]}"
 do

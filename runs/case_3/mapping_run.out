@@ -1,38 +1,412 @@
-Job start at: Wed Nov 15 18:29:06 EST 2023
+Job start at: Wed Nov 15 19:50:10 EST 2023
 ./runs/run_files/gpu_run.sh
 ----------------------
 triplet type :  cancer_to_drug
 ----------------------
 1.12.0+cu102
 Start Evaluation on Test Data Set......
-usage: train.py [<args>] [-h | --help]
-run.py: error: argument --AUC: expected one argument
-/opt/slurm/data/slurmd/job40182757/slurm_script: line 48: -de: command not found
-----------------------
-----------------------
-triplet type :  cancer_to_gene
-----------------------
-1.12.0+cu102
-Start Evaluation on Test Data Set......
-usage: train.py [<args>] [-h | --help]
-run.py: error: argument --AUC: expected one argument
-/opt/slurm/data/slurmd/job40182757/slurm_script: line 48: -de: command not found
+2023-11-15 19:50:23,948 INFO     Model: RotatE
+2023-11-15 19:50:23,949 INFO     Data Path: data/cancer_to_drug
+2023-11-15 19:50:23,949 INFO     #entity: 22873
+2023-11-15 19:50:23,949 INFO     #relation: 151
+2023-11-15 19:50:23,962 INFO     #train: 680
+2023-11-15 19:50:23,984 INFO     #valid: 90
+2023-11-15 19:50:23,993 INFO     #test: 137
+2023-11-15 19:50:24,237 INFO     Model Parameter Configuration:
+2023-11-15 19:50:24,237 INFO     Parameter gamma: torch.Size([1]), require_grad = False
+2023-11-15 19:50:24,238 INFO     Parameter embedding_range: torch.Size([1]), require_grad = False
+2023-11-15 19:50:24,238 INFO     Parameter entity_embedding: torch.Size([22873, 2000]), require_grad = True
+2023-11-15 19:50:24,238 INFO     Parameter relation_embedding: torch.Size([151, 1000]), require_grad = True
+2023-11-15 19:50:35,890 INFO     Loading checkpoint models/RotatE_MSK_uniform...
+2023-11-15 19:50:36,643 INFO     Start Training...
+2023-11-15 19:50:36,643 INFO     init_step = 74999
+2023-11-15 19:50:36,643 INFO     batch_size = 1024
+2023-11-15 19:50:36,643 INFO     negative_adversarial_sampling = 0
+2023-11-15 19:50:36,643 INFO     hidden_dim = 1000
+2023-11-15 19:50:36,643 INFO     gamma = 12.000000
+2023-11-15 19:50:36,643 INFO     negative_adversarial_sampling = False
+2023-11-15 19:50:36,643 INFO     getting auc
+2023-11-15 19:50:37,100 INFO     Evaluating the model... (1/114)
+2023-11-15 19:50:37,102 INFO     Evaluating the model... (2/114)
+2023-11-15 19:50:37,104 INFO     Evaluating the model... (3/114)
+2023-11-15 19:50:37,107 INFO     Evaluating the model... (4/114)
+2023-11-15 19:50:37,116 INFO     Evaluating the model... (5/114)
+2023-11-15 19:50:37,118 INFO     Evaluating the model... (6/114)
+2023-11-15 19:50:37,120 INFO     Evaluating the model... (7/114)
+2023-11-15 19:50:37,122 INFO     Evaluating the model... (8/114)
+2023-11-15 19:50:37,124 INFO     Evaluating the model... (9/114)
+2023-11-15 19:50:37,130 INFO     Evaluating the model... (10/114)
+2023-11-15 19:50:37,131 INFO     Evaluating the model... (11/114)
+2023-11-15 19:50:37,133 INFO     Evaluating the model... (12/114)
+2023-11-15 19:50:37,135 INFO     Evaluating the model... (13/114)
+2023-11-15 19:50:37,137 INFO     Evaluating the model... (14/114)
+2023-11-15 19:50:37,139 INFO     Evaluating the model... (15/114)
+2023-11-15 19:50:37,142 INFO     Evaluating the model... (16/114)
+2023-11-15 19:50:37,145 INFO     Evaluating the model... (17/114)
+2023-11-15 19:50:37,148 INFO     Evaluating the model... (18/114)
+2023-11-15 19:50:37,151 INFO     Evaluating the model... (19/114)
+2023-11-15 19:50:37,154 INFO     Evaluating the model... (20/114)
+2023-11-15 19:50:37,157 INFO     Evaluating the model... (21/114)
+2023-11-15 19:50:37,159 INFO     Evaluating the model... (22/114)
+2023-11-15 19:50:37,162 INFO     Evaluating the model... (23/114)
+2023-11-15 19:50:37,165 INFO     Evaluating the model... (24/114)
+2023-11-15 19:50:37,168 INFO     Evaluating the model... (25/114)
+2023-11-15 19:50:37,171 INFO     Evaluating the model... (26/114)
+2023-11-15 19:50:37,174 INFO     Evaluating the model... (27/114)
+2023-11-15 19:50:37,177 INFO     Evaluating the model... (28/114)
+2023-11-15 19:50:37,180 INFO     Evaluating the model... (29/114)
+2023-11-15 19:50:37,183 INFO     Evaluating the model... (30/114)
+2023-11-15 19:50:37,186 INFO     Evaluating the model... (31/114)
+2023-11-15 19:50:37,189 INFO     Evaluating the model... (32/114)
+2023-11-15 19:50:37,192 INFO     Evaluating the model... (33/114)
+2023-11-15 19:50:37,195 INFO     Evaluating the model... (34/114)
+2023-11-15 19:50:37,198 INFO     Evaluating the model... (35/114)
+2023-11-15 19:50:37,200 INFO     Evaluating the model... (36/114)
+2023-11-15 19:50:37,207 INFO     Evaluating the model... (37/114)
+2023-11-15 19:50:37,210 INFO     Evaluating the model... (38/114)
+2023-11-15 19:50:37,213 INFO     Evaluating the model... (39/114)
+2023-11-15 19:50:37,216 INFO     Evaluating the model... (40/114)
+2023-11-15 19:50:37,219 INFO     Evaluating the model... (41/114)
+2023-11-15 19:50:37,222 INFO     Evaluating the model... (42/114)
+2023-11-15 19:50:37,226 INFO     Evaluating the model... (43/114)
+2023-11-15 19:50:37,232 INFO     Evaluating the model... (44/114)
+2023-11-15 19:50:37,235 INFO     Evaluating the model... (45/114)
+2023-11-15 19:50:37,238 INFO     Evaluating the model... (46/114)
+2023-11-15 19:50:37,241 INFO     Evaluating the model... (47/114)
+2023-11-15 19:50:37,243 INFO     Evaluating the model... (48/114)
+2023-11-15 19:50:37,246 INFO     Evaluating the model... (49/114)
+2023-11-15 19:50:37,249 INFO     Evaluating the model... (50/114)
+2023-11-15 19:50:37,252 INFO     Evaluating the model... (51/114)
+2023-11-15 19:50:37,255 INFO     Evaluating the model... (52/114)
+2023-11-15 19:50:37,258 INFO     Evaluating the model... (53/114)
+2023-11-15 19:50:37,261 INFO     Evaluating the model... (54/114)
+2023-11-15 19:50:37,263 INFO     Evaluating the model... (55/114)
+2023-11-15 19:50:37,266 INFO     Evaluating the model... (56/114)
+2023-11-15 19:50:37,269 INFO     Evaluating the model... (57/114)
+2023-11-15 19:50:37,699 INFO     Evaluating the model... (58/114)
+2023-11-15 19:50:37,701 INFO     Evaluating the model... (59/114)
+2023-11-15 19:50:37,703 INFO     Evaluating the model... (60/114)
+2023-11-15 19:50:37,704 INFO     Evaluating the model... (61/114)
+2023-11-15 19:50:37,721 INFO     Evaluating the model... (62/114)
+2023-11-15 19:50:37,723 INFO     Evaluating the model... (63/114)
+2023-11-15 19:50:37,725 INFO     Evaluating the model... (64/114)
+2023-11-15 19:50:37,727 INFO     Evaluating the model... (65/114)
+2023-11-15 19:50:37,729 INFO     Evaluating the model... (66/114)
+2023-11-15 19:50:37,733 INFO     Evaluating the model... (67/114)
+2023-11-15 19:50:37,735 INFO     Evaluating the model... (68/114)
+2023-11-15 19:50:37,737 INFO     Evaluating the model... (69/114)
+2023-11-15 19:50:37,739 INFO     Evaluating the model... (70/114)
+2023-11-15 19:50:37,740 INFO     Evaluating the model... (71/114)
+2023-11-15 19:50:37,743 INFO     Evaluating the model... (72/114)
+2023-11-15 19:50:37,746 INFO     Evaluating the model... (73/114)
+2023-11-15 19:50:37,749 INFO     Evaluating the model... (74/114)
+2023-11-15 19:50:37,751 INFO     Evaluating the model... (75/114)
+2023-11-15 19:50:37,754 INFO     Evaluating the model... (76/114)
+2023-11-15 19:50:37,757 INFO     Evaluating the model... (77/114)
+2023-11-15 19:50:37,759 INFO     Evaluating the model... (78/114)
+2023-11-15 19:50:37,762 INFO     Evaluating the model... (79/114)
+2023-11-15 19:50:37,765 INFO     Evaluating the model... (80/114)
+2023-11-15 19:50:37,767 INFO     Evaluating the model... (81/114)
+2023-11-15 19:50:37,770 INFO     Evaluating the model... (82/114)
+2023-11-15 19:50:37,773 INFO     Evaluating the model... (83/114)
+2023-11-15 19:50:37,775 INFO     Evaluating the model... (84/114)
+2023-11-15 19:50:37,779 INFO     Evaluating the model... (85/114)
+2023-11-15 19:50:37,782 INFO     Evaluating the model... (86/114)
+2023-11-15 19:50:37,784 INFO     Evaluating the model... (87/114)
+2023-11-15 19:50:37,787 INFO     Evaluating the model... (88/114)
+2023-11-15 19:50:37,790 INFO     Evaluating the model... (89/114)
+2023-11-15 19:50:37,792 INFO     Evaluating the model... (90/114)
+2023-11-15 19:50:37,795 INFO     Evaluating the model... (91/114)
+2023-11-15 19:50:37,798 INFO     Evaluating the model... (92/114)
+2023-11-15 19:50:37,801 INFO     Evaluating the model... (93/114)
+2023-11-15 19:50:37,803 INFO     Evaluating the model... (94/114)
+2023-11-15 19:50:37,806 INFO     Evaluating the model... (95/114)
+2023-11-15 19:50:37,809 INFO     Evaluating the model... (96/114)
+2023-11-15 19:50:37,811 INFO     Evaluating the model... (97/114)
+2023-11-15 19:50:37,814 INFO     Evaluating the model... (98/114)
+2023-11-15 19:50:37,817 INFO     Evaluating the model... (99/114)
+2023-11-15 19:50:37,819 INFO     Evaluating the model... (100/114)
+2023-11-15 19:50:37,822 INFO     Evaluating the model... (101/114)
+2023-11-15 19:50:37,825 INFO     Evaluating the model... (102/114)
+2023-11-15 19:50:37,827 INFO     Evaluating the model... (103/114)
+2023-11-15 19:50:37,830 INFO     Evaluating the model... (104/114)
+2023-11-15 19:50:37,833 INFO     Evaluating the model... (105/114)
+2023-11-15 19:50:37,835 INFO     Evaluating the model... (106/114)
+2023-11-15 19:50:37,838 INFO     Evaluating the model... (107/114)
+2023-11-15 19:50:37,840 INFO     Evaluating the model... (108/114)
+2023-11-15 19:50:37,843 INFO     Evaluating the model... (109/114)
+2023-11-15 19:50:37,846 INFO     Evaluating the model... (110/114)
+2023-11-15 19:50:37,848 INFO     Evaluating the model... (111/114)
+2023-11-15 19:50:37,851 INFO     Evaluating the model... (112/114)
+2023-11-15 19:50:37,854 INFO     Evaluating the model... (113/114)
+2023-11-15 19:50:37,856 INFO     Evaluating the model... (114/114)
+2023-11-15 19:51:46,017 INFO     ----------------------------------------------------------------------------------------------------
+2023-11-15 19:51:46,017 INFO     AUC: 0.953693
+2023-11-15 19:51:46,017 INFO     ----------------------------------------------------------------------------------------------------
+/opt/slurm/data/slurmd/job40183310/slurm_script: line 48: -de: command not found
 ----------------------
 ----------------------
 triplet type :  cancer_to_treatment
 ----------------------
 1.12.0+cu102
 Start Evaluation on Test Data Set......
-usage: train.py [<args>] [-h | --help]
-run.py: error: argument --AUC: expected one argument
-/opt/slurm/data/slurmd/job40182757/slurm_script: line 48: -de: command not found
+2023-11-15 19:51:48,558 INFO     Model: RotatE
+2023-11-15 19:51:48,559 INFO     Data Path: data/cancer_to_treatment
+2023-11-15 19:51:48,559 INFO     #entity: 22873
+2023-11-15 19:51:48,559 INFO     #relation: 151
+2023-11-15 19:51:48,639 INFO     #train: 123
+2023-11-15 19:51:48,640 INFO     #valid: 16
+2023-11-15 19:51:48,640 INFO     #test: 25
+2023-11-15 19:51:48,884 INFO     Model Parameter Configuration:
+2023-11-15 19:51:48,884 INFO     Parameter gamma: torch.Size([1]), require_grad = False
+2023-11-15 19:51:48,884 INFO     Parameter embedding_range: torch.Size([1]), require_grad = False
+2023-11-15 19:51:48,884 INFO     Parameter entity_embedding: torch.Size([22873, 2000]), require_grad = True
+2023-11-15 19:51:48,884 INFO     Parameter relation_embedding: torch.Size([151, 1000]), require_grad = True
+2023-11-15 19:51:51,664 INFO     Loading checkpoint models/RotatE_MSK_uniform...
+2023-11-15 19:51:52,369 INFO     Start Training...
+2023-11-15 19:51:52,370 INFO     init_step = 74999
+2023-11-15 19:51:52,370 INFO     batch_size = 1024
+2023-11-15 19:51:52,370 INFO     negative_adversarial_sampling = 0
+2023-11-15 19:51:52,370 INFO     hidden_dim = 1000
+2023-11-15 19:51:52,370 INFO     gamma = 12.000000
+2023-11-15 19:51:52,370 INFO     negative_adversarial_sampling = False
+2023-11-15 19:51:52,370 INFO     getting auc
+2023-11-15 19:51:52,718 INFO     Evaluating the model... (1/22)
+2023-11-15 19:51:52,743 INFO     Evaluating the model... (2/22)
+2023-11-15 19:51:52,746 INFO     Evaluating the model... (3/22)
+2023-11-15 19:51:52,747 INFO     Evaluating the model... (4/22)
+2023-11-15 19:51:52,765 INFO     Evaluating the model... (5/22)
+2023-11-15 19:51:52,766 INFO     Evaluating the model... (6/22)
+2023-11-15 19:51:52,766 INFO     Evaluating the model... (7/22)
+2023-11-15 19:51:52,767 INFO     Evaluating the model... (8/22)
+2023-11-15 19:51:52,768 INFO     Evaluating the model... (9/22)
+2023-11-15 19:51:52,770 INFO     Evaluating the model... (10/22)
+2023-11-15 19:51:52,771 INFO     Evaluating the model... (11/22)
+2023-11-15 19:51:53,221 INFO     Evaluating the model... (12/22)
+2023-11-15 19:51:53,222 INFO     Evaluating the model... (13/22)
+2023-11-15 19:51:53,223 INFO     Evaluating the model... (14/22)
+2023-11-15 19:51:53,224 INFO     Evaluating the model... (15/22)
+2023-11-15 19:51:53,246 INFO     Evaluating the model... (16/22)
+2023-11-15 19:51:53,247 INFO     Evaluating the model... (17/22)
+2023-11-15 19:51:53,247 INFO     Evaluating the model... (18/22)
+2023-11-15 19:51:53,248 INFO     Evaluating the model... (19/22)
+2023-11-15 19:51:53,249 INFO     Evaluating the model... (20/22)
+2023-11-15 19:51:53,251 INFO     Evaluating the model... (21/22)
+2023-11-15 19:51:53,252 INFO     Evaluating the model... (22/22)
+2023-11-15 19:51:54,175 INFO     ----------------------------------------------------------------------------------------------------
+2023-11-15 19:51:54,175 INFO     AUC: 0.952508
+2023-11-15 19:51:54,175 INFO     ----------------------------------------------------------------------------------------------------
+/opt/slurm/data/slurmd/job40183310/slurm_script: line 48: -de: command not found
 ----------------------
 ----------------------
 triplet type :  gene_to_up_regulate_to_cancer
 ----------------------
 1.12.0+cu102
 Start Evaluation on Test Data Set......
-usage: train.py [<args>] [-h | --help]
-run.py: error: argument --AUC: expected one argument
-/opt/slurm/data/slurmd/job40182757/slurm_script: line 48: -de: command not found
-----------------------
+2023-11-15 19:51:56,740 INFO     Model: RotatE
+2023-11-15 19:51:56,740 INFO     Data Path: data/gene_to_up_regulate_to_cancer
+2023-11-15 19:51:56,740 INFO     #entity: 22873
+2023-11-15 19:51:56,740 INFO     #relation: 151
+2023-11-15 19:51:56,774 INFO     #train: 1104
+2023-11-15 19:51:56,788 INFO     #valid: 148
+2023-11-15 19:51:56,802 INFO     #test: 221
+2023-11-15 19:51:57,057 INFO     Model Parameter Configuration:
+2023-11-15 19:51:57,057 INFO     Parameter gamma: torch.Size([1]), require_grad = False
+2023-11-15 19:51:57,057 INFO     Parameter embedding_range: torch.Size([1]), require_grad = False
+2023-11-15 19:51:57,057 INFO     Parameter entity_embedding: torch.Size([22873, 2000]), require_grad = True
+2023-11-15 19:51:57,057 INFO     Parameter relation_embedding: torch.Size([151, 1000]), require_grad = True
+2023-11-15 19:51:59,833 INFO     Loading checkpoint models/RotatE_MSK_uniform...
+2023-11-15 19:52:00,365 INFO     Start Training...
+2023-11-15 19:52:00,365 INFO     init_step = 74999
+2023-11-15 19:52:00,365 INFO     batch_size = 1024
+2023-11-15 19:52:00,365 INFO     negative_adversarial_sampling = 0
+2023-11-15 19:52:00,365 INFO     hidden_dim = 1000
+2023-11-15 19:52:00,365 INFO     gamma = 12.000000
+2023-11-15 19:52:00,365 INFO     negative_adversarial_sampling = False
+2023-11-15 19:52:00,365 INFO     getting auc
+2023-11-15 19:52:00,748 INFO     Evaluating the model... (1/186)
+2023-11-15 19:52:00,755 INFO     Evaluating the model... (2/186)
+2023-11-15 19:52:00,758 INFO     Evaluating the model... (3/186)
+2023-11-15 19:52:00,763 INFO     Evaluating the model... (4/186)
+2023-11-15 19:52:00,784 INFO     Evaluating the model... (5/186)
+2023-11-15 19:52:00,788 INFO     Evaluating the model... (6/186)
+2023-11-15 19:52:00,791 INFO     Evaluating the model... (7/186)
+2023-11-15 19:52:00,795 INFO     Evaluating the model... (8/186)
+2023-11-15 19:52:00,799 INFO     Evaluating the model... (9/186)
+2023-11-15 19:52:00,803 INFO     Evaluating the model... (10/186)
+2023-11-15 19:52:00,807 INFO     Evaluating the model... (11/186)
+2023-11-15 19:52:00,811 INFO     Evaluating the model... (12/186)
+2023-11-15 19:52:00,814 INFO     Evaluating the model... (13/186)
+2023-11-15 19:52:00,818 INFO     Evaluating the model... (14/186)
+2023-11-15 19:52:00,822 INFO     Evaluating the model... (15/186)
+2023-11-15 19:52:00,827 INFO     Evaluating the model... (16/186)
+2023-11-15 19:52:00,831 INFO     Evaluating the model... (17/186)
+2023-11-15 19:52:00,836 INFO     Evaluating the model... (18/186)
+2023-11-15 19:52:00,840 INFO     Evaluating the model... (19/186)
+2023-11-15 19:52:00,845 INFO     Evaluating the model... (20/186)
+2023-11-15 19:52:00,849 INFO     Evaluating the model... (21/186)
+2023-11-15 19:52:00,853 INFO     Evaluating the model... (22/186)
+2023-11-15 19:52:00,858 INFO     Evaluating the model... (23/186)
+2023-11-15 19:52:00,862 INFO     Evaluating the model... (24/186)
+2023-11-15 19:52:00,867 INFO     Evaluating the model... (25/186)
+2023-11-15 19:52:00,871 INFO     Evaluating the model... (26/186)
+2023-11-15 19:52:00,876 INFO     Evaluating the model... (27/186)
+2023-11-15 19:52:00,880 INFO     Evaluating the model... (28/186)
+2023-11-15 19:52:00,885 INFO     Evaluating the model... (29/186)
+2023-11-15 19:52:00,889 INFO     Evaluating the model... (30/186)
+2023-11-15 19:52:00,893 INFO     Evaluating the model... (31/186)
+2023-11-15 19:52:00,898 INFO     Evaluating the model... (32/186)
+2023-11-15 19:52:00,902 INFO     Evaluating the model... (33/186)
+2023-11-15 19:52:00,907 INFO     Evaluating the model... (34/186)
+2023-11-15 19:52:00,911 INFO     Evaluating the model... (35/186)
+2023-11-15 19:52:00,916 INFO     Evaluating the model... (36/186)
+2023-11-15 19:52:00,920 INFO     Evaluating the model... (37/186)
+2023-11-15 19:52:00,925 INFO     Evaluating the model... (38/186)
+2023-11-15 19:52:00,929 INFO     Evaluating the model... (39/186)
+2023-11-15 19:52:00,934 INFO     Evaluating the model... (40/186)
+2023-11-15 19:52:00,938 INFO     Evaluating the model... (41/186)
+2023-11-15 19:52:00,943 INFO     Evaluating the model... (42/186)
+2023-11-15 19:52:00,948 INFO     Evaluating the model... (43/186)
+2023-11-15 19:52:00,956 INFO     Evaluating the model... (44/186)
+2023-11-15 19:52:00,960 INFO     Evaluating the model... (45/186)
+2023-11-15 19:52:00,965 INFO     Evaluating the model... (46/186)
+2023-11-15 19:52:00,969 INFO     Evaluating the model... (47/186)
+2023-11-15 19:52:00,974 INFO     Evaluating the model... (48/186)
+2023-11-15 19:52:00,978 INFO     Evaluating the model... (49/186)
+2023-11-15 19:52:00,983 INFO     Evaluating the model... (50/186)
+2023-11-15 19:52:00,987 INFO     Evaluating the model... (51/186)
+2023-11-15 19:52:00,992 INFO     Evaluating the model... (52/186)
+2023-11-15 19:52:00,996 INFO     Evaluating the model... (53/186)
+2023-11-15 19:52:01,001 INFO     Evaluating the model... (54/186)
+2023-11-15 19:52:01,005 INFO     Evaluating the model... (55/186)
+2023-11-15 19:52:01,010 INFO     Evaluating the model... (56/186)
+2023-11-15 19:52:01,014 INFO     Evaluating the model... (57/186)
+2023-11-15 19:52:01,019 INFO     Evaluating the model... (58/186)
+2023-11-15 19:52:01,023 INFO     Evaluating the model... (59/186)
+2023-11-15 19:52:01,028 INFO     Evaluating the model... (60/186)
+2023-11-15 19:52:01,032 INFO     Evaluating the model... (61/186)
+2023-11-15 19:52:01,037 INFO     Evaluating the model... (62/186)
+2023-11-15 19:52:01,041 INFO     Evaluating the model... (63/186)
+2023-11-15 19:52:01,046 INFO     Evaluating the model... (64/186)
+2023-11-15 19:52:01,050 INFO     Evaluating the model... (65/186)
+2023-11-15 19:52:01,054 INFO     Evaluating the model... (66/186)
+2023-11-15 19:52:01,059 INFO     Evaluating the model... (67/186)
+2023-11-15 19:52:01,063 INFO     Evaluating the model... (68/186)
+2023-11-15 19:52:01,068 INFO     Evaluating the model... (69/186)
+2023-11-15 19:52:01,072 INFO     Evaluating the model... (70/186)
+2023-11-15 19:52:01,078 INFO     Evaluating the model... (71/186)
+2023-11-15 19:52:01,083 INFO     Evaluating the model... (72/186)
+2023-11-15 19:52:01,088 INFO     Evaluating the model... (73/186)
+2023-11-15 19:52:01,092 INFO     Evaluating the model... (74/186)
+2023-11-15 19:52:01,096 INFO     Evaluating the model... (75/186)
+2023-11-15 19:52:01,101 INFO     Evaluating the model... (76/186)
+2023-11-15 19:52:01,105 INFO     Evaluating the model... (77/186)
+2023-11-15 19:52:01,110 INFO     Evaluating the model... (78/186)
+2023-11-15 19:52:01,114 INFO     Evaluating the model... (79/186)
+2023-11-15 19:52:01,119 INFO     Evaluating the model... (80/186)
+2023-11-15 19:52:01,123 INFO     Evaluating the model... (81/186)
+2023-11-15 19:52:01,127 INFO     Evaluating the model... (82/186)
+2023-11-15 19:52:01,132 INFO     Evaluating the model... (83/186)
+2023-11-15 19:52:01,136 INFO     Evaluating the model... (84/186)
+2023-11-15 19:52:01,142 INFO     Evaluating the model... (85/186)
+2023-11-15 19:52:01,146 INFO     Evaluating the model... (86/186)
+2023-11-15 19:52:01,150 INFO     Evaluating the model... (87/186)
+2023-11-15 19:52:01,155 INFO     Evaluating the model... (88/186)
+2023-11-15 19:52:01,159 INFO     Evaluating the model... (89/186)
+2023-11-15 19:52:01,163 INFO     Evaluating the model... (90/186)
+2023-11-15 19:52:01,168 INFO     Evaluating the model... (91/186)
+2023-11-15 19:52:01,172 INFO     Evaluating the model... (92/186)
+2023-11-15 19:52:01,174 INFO     Evaluating the model... (93/186)
+2023-11-15 19:52:01,628 INFO     Evaluating the model... (94/186)
+2023-11-15 19:52:01,632 INFO     Evaluating the model... (95/186)
+2023-11-15 19:52:01,636 INFO     Evaluating the model... (96/186)
+2023-11-15 19:52:01,640 INFO     Evaluating the model... (97/186)
+2023-11-15 19:52:01,650 INFO     Evaluating the model... (98/186)
+2023-11-15 19:52:01,654 INFO     Evaluating the model... (99/186)
+2023-11-15 19:52:01,658 INFO     Evaluating the model... (100/186)
+2023-11-15 19:52:01,661 INFO     Evaluating the model... (101/186)
+2023-11-15 19:52:01,665 INFO     Evaluating the model... (102/186)
+2023-11-15 19:52:01,672 INFO     Evaluating the model... (103/186)
+2023-11-15 19:52:01,675 INFO     Evaluating the model... (104/186)
+2023-11-15 19:52:01,679 INFO     Evaluating the model... (105/186)
+2023-11-15 19:52:01,683 INFO     Evaluating the model... (106/186)
+2023-11-15 19:52:01,686 INFO     Evaluating the model... (107/186)
+2023-11-15 19:52:01,691 INFO     Evaluating the model... (108/186)
+2023-11-15 19:52:01,695 INFO     Evaluating the model... (109/186)
+2023-11-15 19:52:01,701 INFO     Evaluating the model... (110/186)
+2023-11-15 19:52:01,705 INFO     Evaluating the model... (111/186)
+2023-11-15 19:52:01,710 INFO     Evaluating the model... (112/186)
+2023-11-15 19:52:01,714 INFO     Evaluating the model... (113/186)
+2023-11-15 19:52:01,718 INFO     Evaluating the model... (114/186)
+2023-11-15 19:52:01,723 INFO     Evaluating the model... (115/186)
+2023-11-15 19:52:01,727 INFO     Evaluating the model... (116/186)
+2023-11-15 19:52:01,732 INFO     Evaluating the model... (117/186)
+2023-11-15 19:52:01,736 INFO     Evaluating the model... (118/186)
+2023-11-15 19:52:01,741 INFO     Evaluating the model... (119/186)
+2023-11-15 19:52:01,745 INFO     Evaluating the model... (120/186)
+2023-11-15 19:52:01,750 INFO     Evaluating the model... (121/186)
+2023-11-15 19:52:01,754 INFO     Evaluating the model... (122/186)
+2023-11-15 19:52:01,759 INFO     Evaluating the model... (123/186)
+2023-11-15 19:52:01,763 INFO     Evaluating the model... (124/186)
+2023-11-15 19:52:01,767 INFO     Evaluating the model... (125/186)
+2023-11-15 19:52:01,772 INFO     Evaluating the model... (126/186)
+2023-11-15 19:52:01,777 INFO     Evaluating the model... (127/186)
+2023-11-15 19:52:01,782 INFO     Evaluating the model... (128/186)
+2023-11-15 19:52:01,786 INFO     Evaluating the model... (129/186)
+2023-11-15 19:52:01,791 INFO     Evaluating the model... (130/186)
+2023-11-15 19:52:01,795 INFO     Evaluating the model... (131/186)
+2023-11-15 19:52:01,800 INFO     Evaluating the model... (132/186)
+2023-11-15 19:52:01,804 INFO     Evaluating the model... (133/186)
+2023-11-15 19:52:01,809 INFO     Evaluating the model... (134/186)
+2023-11-15 19:52:01,813 INFO     Evaluating the model... (135/186)
+2023-11-15 19:52:01,818 INFO     Evaluating the model... (136/186)
+2023-11-15 19:52:01,822 INFO     Evaluating the model... (137/186)
+2023-11-15 19:52:01,826 INFO     Evaluating the model... (138/186)
+2023-11-15 19:52:01,831 INFO     Evaluating the model... (139/186)
+2023-11-15 19:52:01,835 INFO     Evaluating the model... (140/186)
+2023-11-15 19:52:01,840 INFO     Evaluating the model... (141/186)
+2023-11-15 19:52:01,844 INFO     Evaluating the model... (142/186)
+2023-11-15 19:52:01,849 INFO     Evaluating the model... (143/186)
+2023-11-15 19:52:01,853 INFO     Evaluating the model... (144/186)
+2023-11-15 19:52:01,858 INFO     Evaluating the model... (145/186)
+2023-11-15 19:52:01,862 INFO     Evaluating the model... (146/186)
+2023-11-15 19:52:01,867 INFO     Evaluating the model... (147/186)
+2023-11-15 19:52:01,871 INFO     Evaluating the model... (148/186)
+2023-11-15 19:52:01,875 INFO     Evaluating the model... (149/186)
+2023-11-15 19:52:01,880 INFO     Evaluating the model... (150/186)
+2023-11-15 19:52:01,884 INFO     Evaluating the model... (151/186)
+2023-11-15 19:52:01,889 INFO     Evaluating the model... (152/186)
+2023-11-15 19:52:01,893 INFO     Evaluating the model... (153/186)
+2023-11-15 19:52:01,898 INFO     Evaluating the model... (154/186)
+2023-11-15 19:52:01,902 INFO     Evaluating the model... (155/186)
+2023-11-15 19:52:01,907 INFO     Evaluating the model... (156/186)
+2023-11-15 19:52:01,911 INFO     Evaluating the model... (157/186)
+2023-11-15 19:52:01,915 INFO     Evaluating the model... (158/186)
+2023-11-15 19:52:01,920 INFO     Evaluating the model... (159/186)
+2023-11-15 19:52:01,924 INFO     Evaluating the model... (160/186)
+2023-11-15 19:52:01,929 INFO     Evaluating the model... (161/186)
+2023-11-15 19:52:01,933 INFO     Evaluating the model... (162/186)
+2023-11-15 19:52:01,938 INFO     Evaluating the model... (163/186)
+2023-11-15 19:52:01,942 INFO     Evaluating the model... (164/186)
+2023-11-15 19:52:01,947 INFO     Evaluating the model... (165/186)
+2023-11-15 19:52:01,951 INFO     Evaluating the model... (166/186)
+2023-11-15 19:52:01,956 INFO     Evaluating the model... (167/186)
+2023-11-15 19:52:01,960 INFO     Evaluating the model... (168/186)
+2023-11-15 19:52:01,966 INFO     Evaluating the model... (169/186)
+2023-11-15 19:52:01,970 INFO     Evaluating the model... (170/186)
+2023-11-15 19:52:01,975 INFO     Evaluating the model... (171/186)
+2023-11-15 19:52:01,979 INFO     Evaluating the model... (172/186)
+2023-11-15 19:52:01,983 INFO     Evaluating the model... (173/186)
+2023-11-15 19:52:01,988 INFO     Evaluating the model... (174/186)
+2023-11-15 19:52:01,992 INFO     Evaluating the model... (175/186)
+2023-11-15 19:52:01,997 INFO     Evaluating the model... (176/186)
+2023-11-15 19:52:02,001 INFO     Evaluating the model... (177/186)
+2023-11-15 19:52:02,006 INFO     Evaluating the model... (178/186)
+2023-11-15 19:52:02,010 INFO     Evaluating the model... (179/186)
+2023-11-15 19:52:02,014 INFO     Evaluating the model... (180/186)
+2023-11-15 19:52:02,019 INFO     Evaluating the model... (181/186)
+2023-11-15 19:52:02,023 INFO     Evaluating the model... (182/186)
+2023-11-15 19:52:02,028 INFO     Evaluating the model... (183/186)
+2023-11-15 19:52:02,032 INFO     Evaluating the model... (184/186)
+2023-11-15 19:52:02,036 INFO     Evaluating the model... (185/186)
+2023-11-15 19:52:02,038 INFO     Evaluating the model... (186/186)

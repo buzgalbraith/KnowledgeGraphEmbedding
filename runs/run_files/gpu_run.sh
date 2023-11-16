@@ -36,7 +36,7 @@ TEST_BATCH_SIZE=${14}
 TRIPLET_TYPE=${15}
 negative_sample_type_train=${16}
 negative_sample_type_test=${17}
-
+AUC=${18}
 if [ $MODE == "train" ]
 then
 
@@ -65,7 +65,7 @@ then
 
 echo "Start Evaluation on Valid Data Set......"
 
-CUDA_VISIBLE_DEVICES=$GPU_DEVICE python -u $CODE_PATH/run.py --do_valid --cuda -init $SAVE --triplet_type $TRIPLET_TYPE --all_datapath $OVERALL_DATA_PATH --negative_sample_type_test $negative_sample_type_test --test_datapath $TEST_DATA_PATH --hidden_dim $HIDDEN_DIM -de --AUC $AUC
+CUDA_VISIBLE_DEVICES=$GPU_DEVICE python -u $CODE_PATH/run.py --do_valid --cuda -init $SAVE --triplet_type $TRIPLET_TYPE --all_datapath $OVERALL_DATA_PATH --negative_sample_type_test $negative_sample_type_test --test_datapath $TEST_DATA_PATH --hidden_dim $HIDDEN_DIM --AUC $AUC
     
 elif [ $MODE == "test" ]
 then
@@ -73,7 +73,7 @@ then
 echo "Start Evaluation on Test Data Set......"
 
 CUDA_VISIBLE_DEVICES=$GPU_DEVICE CUDA_LAUNCH_BLOCKING=1 python -u $CODE_PATH/run.py --do_test --cuda -init $SAVE --data_path $TEST_DATA_PATH --triplet_type $TRIPLET_TYPE --all_datapath $OVERALL_DATA_PATH --negative_sample_type_test $negative_sample_type_test --test_datapath $TEST_DATA_PATH --hidden_dim $HIDDEN_DIM \
---model $MODEL -de --AUC $AUC
+--model $MODEL --test_batch_size $TEST_BATCH_SIZE --AUC $AUC
 
 else
    echo "Unknown MODE" $MODE

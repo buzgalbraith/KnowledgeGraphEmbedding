@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader
 from dataloader import TestDataset
 import torch
 from torch.nn.functional import softmax
-def prob_auc(score:torch.Tensor, true_labels:torch.Tensor, **args):
+def prob_auc(score:torch.Tensor, true_labels:torch.Tensor, run_args,**args):
     """computes ROC_AUC score for a given score and true labels
     Args:
         score (torch.Tensor): the score of the model for the given triplets (n_samples, n_entities)
@@ -15,6 +15,9 @@ def prob_auc(score:torch.Tensor, true_labels:torch.Tensor, **args):
         au_roc (float): the ROC_AUC score for the given score and true labels
     """
     prob_vector = softmax(score, dim=1) ## soft max over the entities  (to make them probability vectors)
+    if run_args.cuda == True: ## have to be on same device to convert to numpy 
+        true_labels = true_labels.cpu().numpy()
+        prob_vector = prob_vector.cpu().numpy()
     au_roc = roc_auc_score(true_labels, prob_vector, **args)  
     return au_roc
 
@@ -102,7 +105,7 @@ def auc_total(all_true_triples:list, model, logging,run_args, **args)->None:
                         step += 1
                         logging.info('Evaluating the model... (%d/%d)' % (step, total_steps))
                         
-        auc = prob_auc(all_scores, all_true_labels, **args)
+        auc = prob_auc(all_scores, all_true_labels,run_args, **args)
         logging.info('-'*100) 
         logging.info('AUC: %f' % auc)
         logging.info('-'*100) 
