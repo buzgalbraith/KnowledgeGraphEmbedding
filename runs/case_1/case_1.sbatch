@@ -13,7 +13,7 @@ module load python/intel/3.8.6 ## load python module
 echo "Job start at: $(date)" # print the date and time the job finished
 
 ## set vars 
-MODE=test ## this is only really for testing models using non-unfirom negative sampleing.
+MODE=train ## this is only really for testing models using non-unfirom negative sampleing.
 MODEL=RotatE
 overall_dataset=MSK
 GPU_DEVICE=0

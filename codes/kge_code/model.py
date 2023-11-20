@@ -323,18 +323,18 @@ class KGEModel(nn.Module):
             #Process test data for AUC-PR evaluation
             sample = list()
             y_true  = list()
+            ## here they are getitng the auc_pr for each region in the test set.
             for head, relation, tail in test_triples:
+                ## so they are getting the true region for each head and tail.
                 for candidate_region in args.regions:
-                    y_true.append(1 if candidate_region == tail else 0)
-                    sample.append((head, relation, candidate_region))
-
+                    ## getting all possible regions for each head and tail
+                    y_true.append(1 if candidate_region == tail else 0) ## adding them to the y true
+                    sample.append((head, relation, candidate_region)) ## adding them to the sample
             sample = torch.LongTensor(sample)
             if args.cuda:
                 sample = sample.cuda()
-
             with torch.no_grad():
                 y_score = model(sample).squeeze(1).cpu().numpy()
-
             y_true = np.array(y_true)
 
             #average_precision_score is the same as auc_pr

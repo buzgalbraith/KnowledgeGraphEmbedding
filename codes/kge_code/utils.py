@@ -5,6 +5,10 @@ from torch.utils.data import DataLoader
 from dataloader import TestDataset
 import torch
 from torch.nn.functional import softmax
+
+## TODO: now we want to add functionality that associates each head with a list of potential tails and vice versa, so that we can do negative sampling 
+
+
 def prob_auc(score:torch.Tensor, true_labels:torch.Tensor, run_args,**args):
     """computes ROC_AUC score for a given score and true labels
     Args:

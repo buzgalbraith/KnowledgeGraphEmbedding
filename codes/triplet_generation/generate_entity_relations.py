@@ -3,7 +3,7 @@ import os
 import numpy as np
 GENERATED_DATA_PATH = './codes/triplet_generation/generated_triplets/'
 def get_entities_and_relations(path:str, triplet_type:str)->None:
-    """takes path to a triplet file, saves all the entities and relations to a text file
+    """takes path to a triplet file, saves all the entities relations, heads and tails to text files
 
     Args:
         path (string): path to a triplet file
@@ -34,12 +34,20 @@ def get_entities_and_relations(path:str, triplet_type:str)->None:
     tails = pd.Series(tails).drop_duplicates()
     entities = pd.concat([heads, tails]).drop_duplicates().reset_index(drop=True)
     relations = pd.Series(relations).drop_duplicates().reset_index(drop=True)
-    ## want to mak
+    ## want to make
     entities.fillna(' NA', inplace=True)
     relations.fillna(' NA', inplace=True)
+    ## here we are adding these head and tail files 
+    heads = heads.reset_index(drop=True)
+    tails = tails.reset_index(drop=True)
+    heads.fillna(' NA', inplace=True)
+    tails.fillna(' NA', inplace=True)
+    
+
     entities.to_csv(triplet_type_path +"entities.dict", sep='\t', index=True, header=False)
     relations.to_csv(triplet_type_path + "relations.dict", sep='\t', index=True, header=False)
-
+    heads.to_csv(triplet_type_path + "heads.dict", sep='\t', index=True, header=False)
+    tails.to_csv(triplet_type_path + "tails.dict", sep='\t', index=True, header=False)
 def make_train_test_val(path:str,triplet_type : str, train_ratio= .75, val_ratio=.10, seed = 15100873)->None:
     """takes path to a triplet file reads in that triplet file and splits it into train test and val sets.
 
@@ -108,6 +116,9 @@ def relations_to_triplet_type(triplets_to_consider: list)->None:
     df.fillna(' NA', inplace=True)
     df.to_csv(GENERATED_DATA_PATH + "/relation_to_triplet_type.txt", sep='\t', index=False, header=False)
 
+
+
+
 if __name__ == "__main__":
     # ## read in the triplets 
     cancer_to_drug =GENERATED_DATA_PATH + "cancer_to_drug_triplets.txt"
@@ -121,6 +132,8 @@ if __name__ == "__main__":
     all = GENERATED_DATA_PATH +"all_triplets.txt"
     get_entities_and_relations(all, 'all_triplets')
     make_train_test_val(all, "all_triplets")
-
     triplets_to_consider = ["cancer_to_drug", "cancer_to_gene", "cancer_to_treatment", "gene_to_up_regulate_to_cancer"]
+    for triplet_type in triplets_to_consider:
+        make_train_test_val(GENERATED_DATA_PATH + triplet_type + "_triplets.txt", triplet_type)
     entity_to_triplet_type(triplets_to_consider)
+    relations_to_triplet_type(triplets_to_consider)
