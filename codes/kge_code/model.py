@@ -378,6 +378,32 @@ class KGEModel(nn.Module):
             step = 0
             total_steps = sum([len(dataset) for dataset in test_dataset_list])
 
+
+            ## AUC calculation bit.
+            if args.AUC:
+                entity2entitytype = utils.get_entity_type_2_id(args)
+                entitytype2taisls = utils.get_possible_tails(args)
+                AUC_log = []
+                total_steps = len(test_dataloader_head)
+                step = 0
+                with torch.no_grad():
+                    for positive_sample, negative_sample, filter_bias, mode in test_dataloader_head:
+                        if args.cuda:
+                            positive_sample = positive_sample.cuda()
+                            negative_sample = negative_sample.cuda()
+                            filter_bias = filter_bias.cuda()
+                        batch_size = positive_sample.size(0)
+                        batch_auc = utils.binary_auc(model, positive_sample, entity2entitytype, entitytype2taisls, args)
+                        AUC_log.append(batch_auc)
+                        verbose = True
+                        if verbose:
+                            print("at step {0} out of {1} AUC is, {2}".format(step, total_steps ,batch_auc)) ## mute this later, just for testing.
+                        step += 1
+                AUC = np.mean(AUC_log)
+                metrics = {'AUC': AUC}       
+                return metrics
+
+
             with torch.no_grad():
                 for test_dataset in test_dataset_list:
                     for positive_sample, negative_sample, filter_bias, mode in test_dataset:

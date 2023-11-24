@@ -6,7 +6,99 @@ from dataloader import TestDataset
 import torch
 from torch.nn.functional import softmax
 
-## TODO: now we want to add functionality that associates each head with a list of potential tails and vice versa, so that we can do negative sampling 
+## TODO: validate the splitting on patient id stuff and then check binary auc stuff as well
+
+def binary_auc(model, test_triples, entity2entitytype, entitytype2taisls, args):
+    """Calculates the ROC_AUC score for a given model and test set. Note that
+    Args:
+        model (KGEModel): the model to evaluate
+        test_triples (list): list of all the true triplets
+        entity2entitytype (dict): dict mapping all entities to their entity type
+        entitytype2taisls (dict): dict mapping all entity types to their possible tails
+        args (Namespace): arguments for the model
+    Returns:
+        roc_auc (float): the ROC_AUC score for the given model and test set
+    """
+    if args.triplet_type == 'all':
+        raise ValueError("binary auc only works for a single triplet type, in other words for this at one triplet type at a time.")
+
+    sample = list()
+    y_true  = list()
+    for head, relation, tail in test_triples:
+        possible_tails = entitytype2taisls[args.triplet_type] 
+
+        if len(possible_tails) > args.negative_sample_size: ## if there are more possible tails than the negative sample size then we just take that number of them.
+            possible_tails = np.random.choice(size=args.negative_sample_size, a = possible_tails)
+        for candidate_tail in possible_tails:
+            y_true.append(1 if candidate_tail == tail else 0) ## adding them to the y true
+            sample.append((head, relation, candidate_tail)) ## adding them to the sample
+        ## making sure that the true triplet is in the sample
+        sample.append((head, relation, tail)) ## adding the true triplet to the sample
+        y_true.append(1)
+    sample = torch.LongTensor(sample)
+    if args.cuda:
+        sample = sample.cuda()
+    with torch.no_grad():
+        y_score = model(sample).squeeze(1).cpu().numpy()
+    y_true = np.array(y_true)
+    roc_auc = roc_auc_score(y_true, y_score)
+    return roc_auc
+
+def get_entity_type_2_id(args):
+        """Returns a dictionary mapping entity id to entity type.
+        Args:
+            new_entity2id (dict) : dict mapping all entities to their new ids (only matters for testing)
+            entity2id (dict): dict mapping all entities to their original ids 
+            args (Namespace): arguments for the model
+        Returns:
+            entity_type_hash (dict) : dictionary mapping entity id to entity type
+        
+        """
+        entity_type_hash = {}
+        path_extension = 'entity_to_triplet_type.txt'
+        path = args.all_datapath + "/" + path_extension
+
+        with open(path) as fin:
+            for line in fin:
+                entity_type , entity = line.strip().split('\t')
+                if args.triplet_type == 'all':
+                    entity_id = args.entity2id[entity]
+                    entity_type_hash[entity_id] = entity_type
+                else:
+                    if entity_type == args.triplet_type:
+                        entity_id = args.new_entity2id[args.entity2id[entity]]
+                        entity_type_hash[entity_id] = entity_type
+        return entity_type_hash
+
+
+def get_possible_tails(args):
+    """returns a dictionary mapping triplet type to a list of possible tails for a given head.
+    
+    Args:
+        new_entity2id (dict) : dict mapping all entities to their new ids (only matters for testing)
+        entity2id (dict): dict mapping all entities to their original ids 
+        args (Namespace): arguments for the model
+    Returns:
+        triplet_type_to_tails (dict) : dictionary mapping triplet type to a list of possible tails for a given head
+    """
+    base_path = args.all_datapath
+    triplet_types = [args.triplet_type] if args.triplet_type != 'all' else ["cancer_to_drug", "cancer_to_gene", "cancer_to_treatment", "gene_to_up_regulate_to_cancer"]
+    triplet_type_to_tails = {}
+    for triplet_type in triplet_types:
+        possible_tails = []
+        path = base_path +"/"+ triplet_type + "/tails.dict"
+        with open(path) as fin:
+            for line in fin:
+                _, tail = line.strip().split('\t')
+                if args.triplet_type == 'all':
+                    tail_id = args.entity2id[tail]
+                    possible_tails.append(tail_id)
+                else:
+                    if triplet_type == args.triplet_type:
+                        tail_id = args.new_entity2id[args.entity2id[tail]]
+                        possible_tails.append(tail_id)
+        triplet_type_to_tails[triplet_type] = possible_tails
+    return triplet_type_to_tails
 
 
 def prob_auc(score:torch.Tensor, true_labels:torch.Tensor, run_args,**args):

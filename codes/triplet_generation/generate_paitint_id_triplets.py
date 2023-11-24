@@ -3,12 +3,16 @@ import pandas as pd
 import numpy as np 
 import warnings
 
-
 # Read data from the first file into a DataFrame
 warnings.filterwarnings("ignore")
+try: 
+    os.mkdir('./codes/triplet_generation/paitint_id_triplets')
+except:
+    pass
+
 
 original_data_path = "./codes/triplet_generation/original_data"
-generated_data_path = './codes/triplet_generation/generated_triplets'
+generated_data_path = './codes/triplet_generation/paitint_id_triplets'
 df1 = pd.read_csv(original_data_path + "/patient_mutationgene_triplet.txt", sep="\t", header=0, names=["patient_id", "mutation", "gene"])
 
 
@@ -27,8 +31,8 @@ cancer_gene = pd.merge(df2, df1, on="patient_id", how="left")
 
 cancer_gene
 
-
-cancer_gene = cancer_gene.drop(columns=['patient_id','has_cancer'])
+## dont drop paitent_id for now
+cancer_gene = cancer_gene.drop(columns=['has_cancer'])
 
 
 cancer_gene
@@ -78,7 +82,8 @@ drugs = df3['drugs'].unique()
 cancer_treatment = pd.merge(df2, df3, on="patient_id", how="left")
 
 
-cancer_treatment = cancer_treatment.drop(columns=['patient_id','has_cancer'])
+## we are going to keep patient_id for now
+cancer_treatment = cancer_treatment.drop(columns=['has_cancer'])
 
 
 cancer_treat = cancer_treatment.drop_duplicates()
@@ -143,27 +148,23 @@ cancer_gene.fillna(' NA', inplace=True)
 cancer_treat.fillna(' NA', inplace=True) ## should be 3555 in train Kidney renal clear cell carcinoma
 cancer_drug.fillna(' NA', inplace=True)
 df4.fillna(' NA', inplace=True)
-triplets=[cancer_gene, cancer_treat, cancer_drug, df4]
-
+triplets=[cancer_gene, cancer_treat, cancer_drug]
+cancer_gene = cancer_gene[['patient_id','cancer type', 'mutation', 'gene' ]]
+cancer_treat = cancer_treat[['patient_id',  'cancer type', 'treated with','treatment']]
+cancer_drug = cancer_drug[['patient_id',  'cancer type', 'drugs used','drugs']]
 
 for triplet in triplets:
-    triplet.columns = ['heads', 'relations', 'tails']
+    print(triplet.columns)
+    print("-"*100)
+    triplet.columns = ['patient_id', 'heads', 'relations', 'tails']
 
 
-
-final_triplets=pd.concat(triplets, ignore_index=True)
-final_triplets.replace(r'^\s*$',  np.nan,regex=True, inplace=True)
-final_triplets.fillna(' NA', inplace=True) 
-
-
-
-final_triplets.to_csv(generated_data_path+'/all_triplets.txt', sep='\t', index=False, header=False)
 
 
 
 cancer_gene.to_csv(generated_data_path+'/cancer_to_gene_triplets.txt', sep='\t', index=False, header=False)
 cancer_treat.to_csv(generated_data_path + '/cancer_to_treatment_triplets.txt', sep='\t', index=False, header=False)
-df4.to_csv(generated_data_path + '/gene_to_up_regulate_to_cancer_triplets.txt', sep='\t', index=False, header=False)
+# df4.to_csv(generated_data_path + '/gene_to_up_regulate_to_cancer_triplets_patient_id.txt', sep='\t', index=False, header=False)
 cancer_drug.to_csv(generated_data_path +'/cancer_to_drug_triplets.txt', sep='\t', index=False, header=False)
 
 

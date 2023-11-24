@@ -8,7 +8,8 @@ DATA_PATH='./data'
 CODE_PATH="./codes/triplet_generation"
 echo "Generating triplets ..."
 
-# python $CODE_PATH'/triplet_generation_script.py' 
+python $CODE_PATH'/triplet_generation_script.py' 
+python $CODE_PATH'/generate_paitint_id_triplets.py'
 echo "done"
 
 echo "Pre-processing data ..."
