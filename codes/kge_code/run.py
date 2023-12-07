@@ -17,7 +17,7 @@ from torch.utils.data import DataLoader
 
 from model import KGEModel
 
-from dataloader import TrainDataset
+from dataloader import TrainDataset, TestDataset
 from dataloader import BidirectionalOneShotIterator
 import utils
 from run import *
@@ -94,7 +94,7 @@ def override_config(args):
     args.double_entity_embedding = argparse_dict['double_entity_embedding']
     args.double_relation_embedding = argparse_dict['double_relation_embedding']
     args.hidden_dim = argparse_dict['hidden_dim']
-    # args.cpu_num = 4 only use while debugging.
+    # args.cpu_num = 4# only use while debugging.
     
 def save_model(model, optimizer, save_variable_list, args):
     '''
@@ -191,12 +191,11 @@ def main(args):
         args.all_datapath = args.data_path
     
     entity2id = utils.get_entity2id(args.all_datapath)
+    args.entity2id = entity2id
     relation2id = utils.get_relation2id(args.all_datapath)
-    possible_entities = utils.get_possible_entities(args.test_datapath, entity2id)
-    possible_relations = utils.get_possible_relations(args.test_datapath, relation2id)
-    new_entity2id = utils.reset_index(entity2id, possible_entities)
-    new_relation2id = utils.reset_index(relation2id, possible_relations)
+    args.relation2id = relation2id
 
+    
     nentity = len(entity2id)
     nrelation = len(relation2id)
     
@@ -227,6 +226,8 @@ def main(args):
         double_entity_embedding=args.double_entity_embedding,
         double_relation_embedding=args.double_relation_embedding
     )
+    possible_entities = utils.get_possible_entities(args.test_datapath, entity2id)
+    possible_relations = utils.get_possible_relations(args.test_datapath, relation2id)
     args.nentity = len(possible_entities)
     args.nrelation = len(possible_relations)
     
@@ -277,6 +278,17 @@ def main(args):
         init_step = checkpoint['step']
         kge_model.load_state_dict(checkpoint['model_state_dict'])
         ## buz modification -- stratified negative sampling
+        if args.triplet_type != 'all':
+            new_entity2id = utils.reset_index(entity2id, possible_entities)
+            new_relation2id = utils.reset_index(relation2id, possible_relations)
+            args.new_entity2id = new_entity2id
+            args.new_relation2id = new_relation2id
+            entity2entitytype = utils.get_entity_type_2_id(args)
+        else:
+            possible_entities = None
+            possible_relations = None
+            new_entity2id = None
+            new_relation2id = None
         if args.triplet_type != 'all' and args.negative_sample_type_test != 'uniform':
             kge_model = utils.stratify_model(kge_model, new_entity2id, new_relation2id, possible_entities, possible_relations, args)
             ## reset the triplets in terms of the possible entites and relations
@@ -361,12 +373,7 @@ def main(args):
         metrics = kge_model.test_step(kge_model, valid_triples, all_true_triples, args)
         log_metrics('Valid', step, metrics)
     
-    if args.AUC:
-        logging.info("getting auc")
-        utils.auc_total(all_true_triples, kge_model,logging,  args, multi_class = 'ovo')
-        ## want to exit the script now 
-        exit()
-    
+
     if args.do_test:
         logging.info('Evaluating on Test Dataset...')
         metrics = kge_model.test_step(kge_model, test_triples, all_true_triples, args)
