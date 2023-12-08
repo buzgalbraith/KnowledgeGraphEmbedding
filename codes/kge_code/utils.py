@@ -5,8 +5,51 @@ from torch.utils.data import DataLoader
 from dataloader import TestDataset
 import torch
 from torch.nn.functional import softmax
+import matplotlib.pyplot as plt
+from matplotlib import cm
 
 ## TODO: validate the splitting on patient id stuff and then check binary auc stuff as well
+
+def get_cancer_labels(k=10, path_to_cancer_labels:str = "data/patient_cancer_type_triplets/") -> Dict[str, int]:
+    """Returns a dictionary mapping patient id to color representation of cancer type.
+
+    Args:
+        k (int, optional): number of cancer types to keep. Defaults to 10.
+        path_to_cancer_labels (str, optional): path to the cancer labels file
+    Returns:
+        pid_to_cancer_map (dict): dict mapping patient id to int representation of cancer type
+    """
+    files = ["train.txt",'valid.txt', 'test.txt']
+    ## read in all patient id and cancer type pairs
+    pid_to_cancer_map = {}
+    for file in files:
+        file_path = path_to_cancer_labels + file
+        with open(file_path, "r") as f:
+            lines = f.readlines()
+            for line in lines:
+                pid, _, cancer_type = line.strip().split("\t")
+                pid_to_cancer_map[pid] = cancer_type
+    cancer_type_map = {cancer_type:i for i, cancer_type in enumerate(np.unique(list(pid_to_cancer_map.values())))}
+    ## find k most common cancer types
+    cancer_type_counts = {cancer_type:0 for cancer_type in cancer_type_map.keys()}
+    for cancer_type in pid_to_cancer_map.values():
+        cancer_type_counts[cancer_type] += 1
+    ## sort the cancer types by count
+    cancer_type_counts = {cancer_type:count for cancer_type, count in sorted(cancer_type_counts.items(), key=lambda item: item[1], reverse=True)}
+    ## get the k most common cancer types and associate them with an int for color mapping
+    cancer_type_map = {cancer_type:i for i, cancer_type in enumerate(list(cancer_type_counts.keys())[:k])}
+    ## get rid of all paints with cancers not in top k 
+    pid_to_cancer_map = {pid:cancer_type for pid, cancer_type in pid_to_cancer_map.items() if cancer_type in cancer_type_map.keys()}
+    ## get list of those patients
+    pids = list(pid_to_cancer_map.keys()) 
+    ## get colors for each cancer type and call it c 
+    cmap = plt.get_cmap('tab10')
+    norm = plt.Normalize(vmin=0, vmax=len(cancer_type_map)-1)
+    sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
+    colors = {cancer_type:sm.to_rgba(i) for cancer_type, i in cancer_type_map.items()}
+    c = [colors[cancer_type] for cancer_type in pid_to_cancer_map.values()]
+    return c, pids, colors
+
 
 def binary_auc(model, test_triples, entity2entitytype, entitytype2taisls, args):
     """Calculates the ROC_AUC score for a given model and test set. Note that
@@ -57,12 +100,15 @@ def get_entity_type_2_id(args):
         entity_type_hash = {}
         path_extension = 'entity_to_triplet_type.txt'
         path = args.all_datapath + "/" + path_extension
-
+        print(path)
         with open(path) as fin:
             for line in fin:
                 entity_type , entity = line.strip().split('\t')
                 if args.triplet_type == 'all':
-                    entity_id = args.entity2id[entity]
+                    try:
+                        entity_id = args.entity2id[entity.strip()]
+                    except:
+                        entity_id = args.entity2id[str(float(entity))]
                     entity_type_hash[entity_id] = entity_type
                 else:
                     if entity_type == args.triplet_type:
@@ -82,7 +128,11 @@ def get_possible_tails(args):
         triplet_type_to_tails (dict) : dictionary mapping triplet type to a list of possible tails for a given head
     """
     base_path = args.all_datapath
-    triplet_types = [args.triplet_type] if args.triplet_type != 'all' else ["cancer_to_drug", "cancer_to_gene", "cancer_to_treatment", "gene_to_up_regulate_to_cancer"]
+    if "MSK" in base_path:
+        triplet_types = [args.triplet_type] if args.triplet_type != 'all' else ["cancer_to_drug", "cancer_to_gene", "cancer_to_treatment", "gene_to_up_regulate_to_cancer"]
+    else:
+        triplet_types = [args.triplet_type] if args.triplet_type != 'all' else ['patient_cancer_type_triplets', 'pid_age_triplets', 'pid_drugs_triplets','pid_mutation_missense_variant_triplets', 'pid_mutation_non_missense_variant_triplets', 'pid_race_triplets','pid_sex_triplets','pid_treatment_triplets' ]
+
     triplet_type_to_tails = {}
     for triplet_type in triplet_types:
         possible_tails = []
@@ -91,11 +141,14 @@ def get_possible_tails(args):
             for line in fin:
                 _, tail = line.strip().split('\t')
                 if args.triplet_type == 'all':
-                    tail_id = args.entity2id[tail]
+                    try:
+                        tail_id = args.entity2id[tail.strip()]
+                    except:
+                        tail_id = args.entity2id[str(float(tail))]
                     possible_tails.append(tail_id)
                 else:
                     if triplet_type == args.triplet_type:
-                        tail_id = args.new_entity2id[args.entity2id[tail]]
+                        tail_id = args.new_entity2id[args.entity2id[tail.strip()]]
                         possible_tails.append(tail_id)
         triplet_type_to_tails[triplet_type] = possible_tails
     return triplet_type_to_tails
@@ -220,7 +273,7 @@ def get_entity2id(all_datapath: str= "./data/MSK") -> dict:
         entity2id = dict()
         for line in f:
             eid, entity = line.strip().split('\t')
-            entity2id[entity] = int(eid)
+            entity2id[entity.strip()] = int(eid)
     return entity2id
 def get_relation2id(all_datapath: str)->dict:
     """returns a dict mapping all relations to their ids (which is used for training the model on all data)
@@ -252,7 +305,7 @@ def get_possible_entities(test_datapath: str, entity2id: dict)->np.ndarray:
             line = line.strip()
             temp = line.split('\t')
             eid, entity = line.strip().split('\t')
-            possible_entities.append(entity2id[entity])
+            possible_entities.append(entity2id[entity.strip()])
     return np.array(possible_entities)
 def get_possible_relations(test_datapath:str, relation2id: dict)->np.ndarray:
     """finds the possible relations for a certain triplet type and returns them as a numpy array
@@ -373,5 +426,4 @@ def train_to_train_and_val(path: str, validation_rate: float = 0.8) -> None:
             for line in val:
                 f.write(f"{line}")
         f.close()
-
 

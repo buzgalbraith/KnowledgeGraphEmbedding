@@ -380,6 +380,7 @@ class KGEModel(nn.Module):
 
 
             ## AUC calculation bit.
+
             if args.AUC:
                 entity2entitytype = utils.get_entity_type_2_id(args)
                 entitytype2taisls = utils.get_possible_tails(args)

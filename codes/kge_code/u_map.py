@@ -21,6 +21,70 @@ from dataloader import TrainDataset, TestDataset
 from dataloader import BidirectionalOneShotIterator
 import utils
 from run import *
+import matplotlib.pyplot as plt
+from sklearn.manifold import TSNE
+
+
+
+
+os.environ["NUMBA_CACHE_DIR"] = "/tmp"
+import umap
+def u_map(kge_model, entity2id):
+    ## get colors for mapping and pid of patients to map
+    colors, pids, cancer_type_to_colors= utils.get_cancer_labels(k=33)
+#    get the embedding index for all of those pids
+    pid_id = []
+    for pid in pids:
+        pid_id.append(entity2id[pid])
+    pid_id = torch.LongTensor(pid_id)
+    ## get the embedding for all the pids
+    pid_embedding = kge_model.entity_embedding[pid_id].detach().cpu().numpy()
+    ## make a umap reducing 2 dimensions
+    reducer = umap.UMAP(
+    n_neighbors=30,
+    min_dist=0.0,
+    n_components=2,
+)
+    ## transform the embeddings
+    embedding = reducer.fit_transform(pid_embedding)
+    for i in range(len(colors)):
+        plt.scatter(embedding[i, 0], embedding[i, 1], color=colors[i], s=0.5, alpha=0.5)
+    legend_handles = []
+    # for cancer_type in cancer_type_to_colors.keys():
+    #     legend_handles.append(plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=cancer_type_to_colors[cancer_type], markersize=5, label=cancer_type))
+    # Create the legend
+    # plt.legend(handles=legend_handles, title='Cancer Type', loc='upper right', fontsize='small')  # Adjust 'small' to your preferred size
+    plt.ylabel("U-map Embeding Dimension 0")
+    plt.xlabel("U-map Embeding Dimension 1")
+
+    plt.savefig("saved_figs/umap.png")
+def tsne(kge_model, entity2id):
+    ## get colors for mapping and pid of patients to map
+    colors, pids, cancer_type_to_colors= utils.get_cancer_labels(k=5)
+#    get the embedding index for all of those pids
+    pid_id = []
+    for pid in pids:
+        pid_id.append(entity2id[pid])
+    pid_id = torch.LongTensor(pid_id)
+    ## get the embedding for all the pids
+    pid_embedding = kge_model.entity_embedding[pid_id].detach().cpu().numpy()
+    ## make a umap reducing 2 dimensions
+    reducer = TSNE(n_components=2, perplexity=30.0, early_exaggeration=12.0, learning_rate=200.0, n_iter=1000, n_iter_without_progress=300, min_grad_norm=1e-07, metric='euclidean', init='random', verbose=0, random_state=None, method='barnes_hut', angle=0.5)
+    ## transform the embeddings
+    embedding = reducer.fit_transform(pid_embedding)
+    for i in range(len(colors)):
+        plt.scatter(embedding[i, 0], embedding[i, 1], color=colors[i], s=0.3)
+    legend_handles = []
+    for cancer_type in cancer_type_to_colors.keys():
+        legend_handles.append(plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=cancer_type_to_colors[cancer_type], markersize=5, label=cancer_type))
+    # Create the legend
+    plt.legend(handles=legend_handles, title='Cancer Type', loc='upper right', fontsize='small')  # Adjust 'small' to your preferred size
+    plt.ylabel("TSNE Embeding Dimension 0")
+    plt.xlabel("TSNE Embeding Dimension 1")
+
+    plt.savefig("saved_figs/TSNE.png")
+
+
 def parse_args(args=None):
     parser = argparse.ArgumentParser(
         description='Training and Testing Knowledge Graph Embedding Models',
@@ -320,72 +384,15 @@ def main(args):
         logging.info('adversarial_temperature = %f' % args.adversarial_temperature)
     
     # Set valid dataloader as it would be evaluated during training
+    print("starting u_map stuff")
+    umap = True
+    if umap:
+        u_map(kge_model, entity2id)
+    else:
+        tsne(kge_model, entity2id)
     
-    if args.do_train:
-        logging.info('learning_rate = %d' % current_learning_rate)
-
-        training_logs = []
-        
-        #Training Loop
-        for step in range(init_step, args.max_steps):
-            
-            log = kge_model.train_step(kge_model, optimizer, train_iterator, args)
-            
-            training_logs.append(log)
-            
-            if step >= warm_up_steps:
-                current_learning_rate = current_learning_rate / 10
-                logging.info('Change learning_rate to %f at step %d' % (current_learning_rate, step))
-                optimizer = torch.optim.Adam(
-                    filter(lambda p: p.requires_grad, kge_model.parameters()), 
-                    lr=current_learning_rate
-                )
-                warm_up_steps = warm_up_steps * 3
-            
-            if step % args.save_checkpoint_steps == 0:
-                save_variable_list = {
-                    'step': step, 
-                    'current_learning_rate': current_learning_rate,
-                    'warm_up_steps': warm_up_steps
-                }
-                save_model(kge_model, optimizer, save_variable_list, args)
-                
-            if step % args.log_steps == 0:
-                metrics = {}
-                for metric in training_logs[0].keys():
-                    metrics[metric] = sum([log[metric] for log in training_logs])/len(training_logs)
-                log_metrics('Training average', step, metrics)
-                training_logs = []
-                
-            if args.do_valid and step % args.valid_steps == 0:
-                logging.info('Evaluating on Valid Dataset...')
-                metrics = kge_model.test_step(kge_model, valid_triples, all_true_triples, args)
-                log_metrics('Valid', step, metrics)
-        
-        save_variable_list = {
-            'step': step, 
-            'current_learning_rate': current_learning_rate,
-            'warm_up_steps': warm_up_steps
-        }
-        save_model(kge_model, optimizer, save_variable_list, args)
-        
-    if args.do_valid:
-        logging.info('Evaluating on Valid Dataset...')
-        metrics = kge_model.test_step(kge_model, valid_triples, all_true_triples, args)
-        log_metrics('Valid', step, metrics)
-    
-
-    if args.do_test:
-        logging.info('Evaluating on Test Dataset...')
-        metrics = kge_model.test_step(kge_model, test_triples, all_true_triples, args)
-        log_metrics('Test', step, metrics)
-    
-    if args.evaluate_train:
-        logging.info('Evaluating on Training Dataset...')
-        metrics = kge_model.test_step(kge_model, train_triples, all_true_triples, args)
-        log_metrics('Test', step, metrics)
-
         
 if __name__ == '__main__':
     main(parse_args())
+    print("omg made it bestie")
 

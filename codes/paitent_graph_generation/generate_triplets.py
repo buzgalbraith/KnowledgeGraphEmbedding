@@ -115,6 +115,7 @@ if __name__ == "__main__":
     format_clinical(clinical_path, save_path)
     # get_patient_to_cancer_type()
     get_treatment_and_drug()
+    patient_mutation_gene_triplets()
     get_all_triplets(save_path, save_path)
     all_path = save_path+"all_triplets.txt"
     df = pd.read_csv(all_path, sep='\t', header=None, names=["head", "relation", "tail"])

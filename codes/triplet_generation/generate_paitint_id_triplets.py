@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np 
 import warnings
 
-# Read data from the first file into a DataFrame
+# TOOD: wait for the data generation stuff to finish running, then validate results for binary auc on the original data as well as data split by pid 
 warnings.filterwarnings("ignore")
 try: 
     os.mkdir('./codes/triplet_generation/paitint_id_triplets')

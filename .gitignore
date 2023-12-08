@@ -1,3 +1,9 @@
 checkpoint
 *.npy
 *.log
+data/
+codes/triplet_generation/generated_triplets/
+codes/triplet_generation/generated_triplets_backup/
+codes/triplet_generation/original_data/
+codes/triplet_generation/paitint_id_triplets/
+

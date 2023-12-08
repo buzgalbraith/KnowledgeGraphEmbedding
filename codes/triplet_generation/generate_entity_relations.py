@@ -260,18 +260,18 @@ def relations_to_triplet_type(triplets_to_consider: list)->None:
 
 if __name__ == "__main__":
     ## read in the triplets 
-    cancer_to_drug =GENERATED_DATA_PATH + "cancer_to_drug_triplets.txt"
-    get_entities_and_relations(cancer_to_drug, 'cancer_to_drug')
-    cancer_to_gene = GENERATED_DATA_PATH +  "cancer_to_gene_triplets.txt"
-    get_entities_and_relations(cancer_to_gene, 'cancer_to_gene')
-    cancer_to_treatment = GENERATED_DATA_PATH + "cancer_to_treatment_triplets.txt"
-    get_entities_and_relations(cancer_to_treatment, 'cancer_to_treatment')
-    gene_to_up_regulate_to_cancer = GENERATED_DATA_PATH +"gene_to_up_regulate_to_cancer_triplets.txt"
-    get_entities_and_relations(gene_to_up_regulate_to_cancer, 'gene_to_up_regulate_to_cancer')
-    all = GENERATED_DATA_PATH +"all_triplets.txt"
-    get_entities_and_relations(all, 'all_triplets')
-    print("starting all triplets ")
-    make_train_test_val(all, "all_triplets", use_pid=True)
+    # cancer_to_drug =GENERATED_DATA_PATH + "cancer_to_drug_triplets.txt"
+    # get_entities_and_relations(cancer_to_drug, 'cancer_to_drug')
+    # cancer_to_gene = GENERATED_DATA_PATH +  "cancer_to_gene_triplets.txt"
+    # get_entities_and_relations(cancer_to_gene, 'cancer_to_gene')
+    # cancer_to_treatment = GENERATED_DATA_PATH + "cancer_to_treatment_triplets.txt"
+    # get_entities_and_relations(cancer_to_treatment, 'cancer_to_treatment')
+    # gene_to_up_regulate_to_cancer = GENERATED_DATA_PATH +"gene_to_up_regulate_to_cancer_triplets.txt"
+    # get_entities_and_relations(gene_to_up_regulate_to_cancer, 'gene_to_up_regulate_to_cancer')
+    # all = GENERATED_DATA_PATH +"all_triplets.txt"
+    # get_entities_and_relations(all, 'all_triplets')
+    # print("starting all triplets ")
+    # make_train_test_val(all, "all_triplets", use_pid=True)
 
     triplets_to_consider = ["cancer_to_drug", "cancer_to_gene", "cancer_to_treatment", "gene_to_up_regulate_to_cancer"]
     for triplet_type in triplets_to_consider:
